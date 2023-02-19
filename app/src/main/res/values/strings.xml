@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SYL</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoibmd1eWVuMTk5OSIsImEiOiJjbGR1aWdjbGIwMTZxM3FwY25lNG9lbXE2In0.9mHcLoxOQWUho2CNmClrYA</string>
+
+</resources>
