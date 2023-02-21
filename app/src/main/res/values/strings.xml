@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">SYL</string>
     <string name="mapbox_access_token">pk.eyJ1Ijoibmd1eWVuMTk5OSIsImEiOiJjbGR1aWdjbGIwMTZxM3FwY25lNG9lbXE2In0.9mHcLoxOQWUho2CNmClrYA</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="forget_password">Forget password?</string>
+    <string name="other_login">Other Login</string>
 
 </resources>
