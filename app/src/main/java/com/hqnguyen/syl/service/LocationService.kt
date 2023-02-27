@@ -1,10 +1,7 @@
 package com.hqnguyen.syl.service
 
 import android.Manifest
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
-import android.content.Context
+import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -13,19 +10,19 @@ import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
+import com.hqnguyen.syl.MainActivity
 import com.hqnguyen.syl.R
 import com.mapbox.geojson.Point
 import timber.log.Timber
 
 
-class LocationService(private val context: Context) : Service() {
+class LocationService : Service() {
 
     companion object {
-        const val NOTIFICATION_ID = 123
-        const val CHANNEL_ID = "CHANNEL_ID"
+        const val CHANNEL_ID = "ForegroundServiceChannel"
     }
 
-    private var fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    private var fusedLocationClient: FusedLocationProviderClient? = null
 
     private var pointList = arrayListOf<Point>()
 
@@ -36,18 +33,29 @@ class LocationService(private val context: Context) : Service() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 Timber.d("doWork notification ${locationResult.lastLocation?.longitude}")
-                pointList.add(Point.fromLngLat(locationResult.lastLocation?.longitude ?: 0.0, locationResult.lastLocation?.latitude ?: 0.0))
+                pointList.add(
+                    Point.fromLngLat(
+                        locationResult.lastLocation?.longitude ?: 0.0,
+                        locationResult.lastLocation?.latitude ?: 0.0
+                    )
+                )
             }
         }
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        if (ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             return
         }
-        fusedLocationClient.requestLocationUpdates(
+        fusedLocationClient?.requestLocationUpdates(
             locationRequest, locationCallback, Looper.getMainLooper()
         )
     }
@@ -56,44 +64,38 @@ class LocationService(private val context: Context) : Service() {
         return null
     }
 
-    private fun createChannel() {
-        // Create a Notification channel
+    private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = context.getString(R.string.app_name)
-            val descriptionText = context.getString(R.string.app_name)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            // Register the channel with the system
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            val serviceChannel = NotificationChannel(
+                CHANNEL_ID,
+                "Foreground Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = getSystemService(
+                NotificationManager::class.java
+            )
+            manager.createNotificationChannel(serviceChannel)
         }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val name = context.getString(R.string.app_name)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createChannel()
-        }
-//
-//        val pendingIntent: PendingIntent =
-//            Intent(this, MainActivity::class.java).let { notificationIntent ->
-//                PendingIntent.getActivity(this, 0, notificationIntent,
-//                    PendingIntent.FLAG_IMMUTABLE)
-//            }
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle(name)
-            .setTicker(name)
-            .setContentText(name)
-            .setSmallIcon(R.mipmap.logo)
-            .setOngoing(true)
+    private fun notificationToDisplayServiceInfo(): Notification {
+        createNotificationChannel()
+        val notificationIntent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0, notificationIntent, 0
+        )
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Simple Foreground Service")
+            .setContentText("Explain about the service")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentIntent(pendingIntent)
             .build()
+    }
 
-        startForeground(NOTIFICATION_ID, notification)
-
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        startForeground(1, notificationToDisplayServiceInfo())
+        getLocation()
         return START_STICKY
     }
 }

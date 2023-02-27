@@ -6,15 +6,14 @@ import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.google.android.gms.location.*
-import com.hqnguyen.syl.*
 import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
+import com.hqnguyen.syl.convertToAvatar
 import com.hqnguyen.syl.databinding.FragmentMapBinding
 import com.hqnguyen.syl.service.LocationService
 import com.hqnguyen.syl.ui.login.UserViewModel
@@ -81,27 +80,30 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
                 avatarMarker?.let { avatar -> createAnnotationMarker(avatar) }
             }
         }
-
-
     }
 
     private fun intEvent() {
         binding.fabRecordLocation.setOnClickListener {
             if (isRecording) {
                 binding.fabRecordLocation.setImageResource(R.drawable.ic_play)
+                stopService()
             } else {
                 binding.fabRecordLocation.setImageResource(R.drawable.ic_resume)
-                createService()
+                startService()
             }
             isRecording = !isRecording
         }
     }
 
-    private fun createService() {
-        val intent = Intent(context, LocationService.javaClass) // Build the intent for the service
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context?.startForegroundService(intent)
-        }
+    private fun startService() {
+        val serviceIntent = Intent(context, LocationService::class.java)
+        serviceIntent.putExtra("inputExtra", pointList)
+        requireContext().startForegroundService(serviceIntent)
+    }
+
+    private fun stopService() {
+        val serviceIntent = Intent(context, LocationService::class.java)
+        requireContext().stopService(serviceIntent)
     }
 
     private fun initMapbox() {
@@ -119,8 +121,14 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     }
 
     private fun createLocationRequest() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             //Will show popup
             return
@@ -182,9 +190,10 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     }
 
     private fun createAnnotationMarker(bitmap: Bitmap) {
-        pointAnnotationManager = pointAnnotationManager ?: annotationApi!!.createPointAnnotationManager(
-            annotationConfig = AnnotationConfig()
-        )
+        pointAnnotationManager =
+            pointAnnotationManager ?: annotationApi!!.createPointAnnotationManager(
+                annotationConfig = AnnotationConfig()
+            )
         pointAnnotationOptions = pointAnnotationOptions ?: PointAnnotationOptions()
             .withPoint(Point.fromLngLat(longitude, latitude))
             .withIconImage(bitmap)
