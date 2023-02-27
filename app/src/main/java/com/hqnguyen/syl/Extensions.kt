@@ -1,11 +1,17 @@
 package com.hqnguyen.syl
 
+import android.content.Context
 import android.graphics.*
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.core.content.ContextCompat
 
 
 fun Bitmap.addBorder(borderSize: Float, color: Int): Bitmap? {
-    val w: Float = this.width.toFloat()
-    val h: Float = this.height.toFloat()
+    val bitmap = this.copy(Bitmap.Config.ARGB_8888, true)
+    val w: Float = bitmap.width.toFloat()
+    val h: Float = bitmap.height.toFloat()
 
     val radius = (h / 2).coerceAtMost(w / 2)
     val output = Bitmap.createBitmap((w + 8).toInt(), (h + 8).toInt(), Bitmap.Config.ARGB_8888)
@@ -21,7 +27,8 @@ fun Bitmap.addBorder(borderSize: Float, color: Int): Bitmap? {
 
     p.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
 
-    c.drawBitmap(this, 4f, 4f, p)
+
+    c.drawBitmap(bitmap, 4f, 4f, p)
     p.xfermode = null
     p.style = Paint.Style.STROKE
     p.color = color
@@ -36,6 +43,9 @@ fun Bitmap.getCroppedBitmap(): Bitmap? {
         this.width,
         this.height, Bitmap.Config.ARGB_8888
     )
+
+    val bitmap = this.copy(Bitmap.Config.ARGB_8888, true)
+
     val canvas = Canvas(output)
     val color = -0xbdbdbe
     val paint = Paint()
@@ -48,6 +58,30 @@ fun Bitmap.getCroppedBitmap(): Bitmap? {
         (this.width / 2).toFloat(), paint
     )
     paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-    canvas.drawBitmap(this, rect, rect, paint)
+    canvas.drawBitmap(bitmap, rect, rect, paint)
     return output
+}
+
+fun Uri.convertToBitmap(context: Context): Bitmap? {
+    try {
+        this.let {
+            if (Build.VERSION.SDK_INT < 28) {
+                return MediaStore.Images.Media.getBitmap(context.contentResolver, this)
+            } else {
+                val source = ImageDecoder.createSource(context.contentResolver, this)
+                return ImageDecoder.decodeBitmap(source)
+            }
+        }
+    } catch (e: Exception) {
+        return null
+    }
+}
+
+fun Uri.convertToAvatar(context: Context): Bitmap? {
+    var avatarMarker = this.convertToBitmap(context)
+    avatarMarker?.let { bitmap ->
+        val bitmapHaveSize = bitmap?.let { Bitmap.createScaledBitmap(it, 80, 80, false) }
+        return bitmapHaveSize?.addBorder(5F, ContextCompat.getColor(context, R.color.blue))
+    }
+    return null
 }

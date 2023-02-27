@@ -8,5 +8,7 @@
     <string name="password">Password</string>
     <string name="forget_password">Forget password?</string>
     <string name="other_login">Other Login</string>
+    <string name="location">Location</string>
+    <string name="location_background">LOCATION_BACKGROUND</string>
 
 </resources>
