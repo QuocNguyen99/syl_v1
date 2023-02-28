@@ -1,4 +1,4 @@
-package com.hqnguyen.syl
+package com.hqnguyen.syl.utils
 
 import timber.log.Timber
 

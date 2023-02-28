@@ -1,19 +1,25 @@
 package com.hqnguyen.syl.ui.map
 
-import android.Manifest
 import android.animation.TypeEvaluator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.IntentFilter
 import android.graphics.Bitmap
+import android.os.Build
+import android.os.Bundle
 import android.os.Looper
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
-import com.hqnguyen.syl.convertToAvatar
+import com.hqnguyen.syl.base.PermissionHelper
+import com.hqnguyen.syl.base.PermissionHelper.permissionControl
+import com.hqnguyen.syl.utils.convertToAvatar
 import com.hqnguyen.syl.databinding.FragmentMapBinding
 import com.hqnguyen.syl.service.LocationService
 import com.hqnguyen.syl.ui.login.UserViewModel
@@ -28,7 +34,6 @@ import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.locationcomponent.location
 import timber.log.Timber
 
-
 class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate) {
 
     companion object {
@@ -38,9 +43,9 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     }
 
     private val userVM: UserViewModel by activityViewModels()
+    private var locationBroadCast: BroadcastReceiver? = null
 
     private var isRecording = false
-
 
     private var longitude: Double = 0.0
     private var latitude: Double = 0.0
@@ -64,12 +69,28 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     private var polylineAnnotationOptions: PolylineAnnotationOptions? = null
     private var pointAnnotation: PointAnnotation? = null
     private var polylineAnnotation: PolylineAnnotation? = null
-    var isCreatedPolylineManager = false
+    private var isCreatedPolylineManager = false
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        stopService()
+    }
     override fun onViewCreated() {
+        annotationApi = binding.mapView.annotations
         initMapbox()
         intEvent()
+        initBroadCast()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        locationBroadCast?.let { LocalBroadcastManager.getInstance(requireContext()).registerReceiver(it, IntentFilter("your_intent_filter")) }
         createLocationRequest()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        locationBroadCast?.let { LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(it) }
     }
 
     override fun onObserverLiveData() {
@@ -82,22 +103,43 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
         }
     }
 
+    private fun initBroadCast() {
+        locationBroadCast = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                Timber.d("onStartCommand initBroadCast ")
+                intent.extras?.let {
+                    var data :ArrayList<Point>
+                    when {
+                        Build.VERSION.SDK_INT >= 33 -> data = it.getSerializable("POINT_LIST", ArrayList::class.java) as ArrayList<Point>
+                        else -> @Suppress("DEPRECATION") data = it.getSerializable("POINT_LIST") as ArrayList<Point>
+                    }
+                    Timber.d("onStartCommand initBroadCast: ${data.size}")
+                    pointList = data.plus(pointList) as ArrayList<Point>
+                }
+            }
+        }
+    }
+
     private fun intEvent() {
         binding.fabRecordLocation.setOnClickListener {
-            if (isRecording) {
-                binding.fabRecordLocation.setImageResource(R.drawable.ic_play)
-                stopService()
+            if (PermissionHelper.isGranted(requireActivity(), *PermissionHelper.locationPermission)) {
+                if (isRecording) {
+                    binding.fabRecordLocation.setImageResource(R.drawable.ic_play)
+                    stopService()
+                } else {
+                    binding.fabRecordLocation.setImageResource(R.drawable.ic_resume)
+                    startService()
+                }
+                isRecording = !isRecording
             } else {
-                binding.fabRecordLocation.setImageResource(R.drawable.ic_resume)
-                startService()
+                createLocationRequest()
             }
-            isRecording = !isRecording
         }
     }
 
     private fun startService() {
         val serviceIntent = Intent(context, LocationService::class.java)
-        serviceIntent.putExtra("inputExtra", pointList)
+        serviceIntent.putExtra("pointList", pointList)
         requireContext().startForegroundService(serviceIntent)
     }
 
@@ -120,60 +162,49 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun createLocationRequest() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            //Will show popup
-            return
-        }
+        permissionControl(
+            activity = requireActivity(),
+            onGranted = {
+                locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 700).build()
 
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 700).build()
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-                if (locationResult.lastLocation?.longitude == longitude &&
-                    locationResult.lastLocation?.latitude == latitude
-                )
-                    return
-                preLongitude = longitude
-                preLatitude = latitude
-                longitude = locationResult.lastLocation?.longitude ?: 0.0
-                latitude = locationResult.lastLocation?.latitude ?: 0.0
-                pointList.add(Point.fromLngLat(longitude, latitude))
-                Timber.d("onLocationResult longitude: $longitude -- latitude: $latitude ")
-                animationWhenMoving()
-                if (pointList.size >= 2) {
-                    if (!isCreatedPolylineManager) {
-                        isCreatedPolylineManager = true
-                        createPolyLine()
-                    } else {
-                        updatePolyline()
+                locationCallback = object : LocationCallback() {
+                    override fun onLocationResult(locationResult: LocationResult) {
+                        super.onLocationResult(locationResult)
+                        if (locationResult.lastLocation?.longitude == longitude && locationResult.lastLocation?.latitude == latitude)
+                            return
+                        preLongitude = longitude
+                        preLatitude = latitude
+                        longitude = locationResult.lastLocation?.longitude ?: 0.0
+                        latitude = locationResult.lastLocation?.latitude ?: 0.0
+                        pointList.add(Point.fromLngLat(longitude, latitude))
+                        Timber.d("onLocationResult longitude: $longitude -- latitude: $latitude ")
+                        animationWhenMoving()
+                        if (pointList.size >= 2) {
+                            if (!isCreatedPolylineManager) {
+                                isCreatedPolylineManager = true
+                                createPolyLine()
+                            } else {
+                                updatePolyline()
+                            }
+                        }
                     }
                 }
+
+                fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+                fusedLocationClient.requestLocationUpdates(
+                    locationRequest, locationCallback, Looper.getMainLooper()
+                )
             }
-        }
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest, locationCallback, Looper.getMainLooper()
-        )
-
-        annotationApi = binding.mapView.annotations
-        polylineAnnotationManager = annotationApi!!.createPolylineAnnotationManager(
-            annotationConfig = AnnotationConfig(LAYER_MARKER_ID, LAYER_ID, SOURCE_ID)
         )
     }
 
     private fun createPolyLine() {
+        polylineAnnotationManager = polylineAnnotationManager ?: annotationApi!!.createPolylineAnnotationManager(
+            annotationConfig = AnnotationConfig(LAYER_MARKER_ID, LAYER_ID, null)
+        )
         polylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(pointList)
             .withLineColor(ContextCompat.getColor(requireContext(), R.color.blue))

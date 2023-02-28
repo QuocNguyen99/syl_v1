@@ -2,7 +2,7 @@ package com.hqnguyen.syl.ui.menu
 
 import androidx.fragment.app.activityViewModels
 import com.hqnguyen.syl.base.BaseFragment
-import com.hqnguyen.syl.convertToAvatar
+import com.hqnguyen.syl.utils.convertToAvatar
 import com.hqnguyen.syl.databinding.FragmentMenuBinding
 import com.hqnguyen.syl.ui.dialog.DialogUpdateImageFragment
 import com.hqnguyen.syl.ui.login.UserViewModel

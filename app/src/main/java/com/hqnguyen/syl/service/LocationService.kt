@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.hqnguyen.syl.MainActivity
 import com.hqnguyen.syl.R
@@ -32,6 +33,10 @@ class LocationService : Service() {
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
+                if (locationResult.lastLocation?.longitude == pointList[pointList.size - 1].longitude()
+                    && locationResult.lastLocation?.latitude == pointList[pointList.size - 1].latitude()
+                )
+                    return
                 Timber.d("doWork notification ${locationResult.lastLocation?.longitude}")
                 pointList.add(
                     Point.fromLngLat(
@@ -65,37 +70,51 @@ class LocationService : Service() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(
-                CHANNEL_ID,
-                "Foreground Service Channel",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            val manager = getSystemService(
-                NotificationManager::class.java
-            )
-            manager.createNotificationChannel(serviceChannel)
-        }
+        val serviceChannel = NotificationChannel(CHANNEL_ID, "Foreground Service Channel", NotificationManager.IMPORTANCE_DEFAULT)
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(serviceChannel)
     }
 
     private fun notificationToDisplayServiceInfo(): Notification {
         createNotificationChannel()
         val notificationIntent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0, notificationIntent, 0
-        )
+        val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(
+                this,
+                0,
+                notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getBroadcast(
+                this,
+                0,
+                notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Simple Foreground Service")
-            .setContentText("Explain about the service")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("SYL Service")
+            .setContentText("App is running for get your location")
+            .setSmallIcon(R.drawable.ic_location)
             .setContentIntent(pendingIntent)
             .build()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(1, notificationToDisplayServiceInfo())
+        val data = intent?.getSerializableExtra("pointList") as ArrayList<Point>
+        Timber.d("onStartCommand ${data.size}")
+        pointList = pointList.plus(data) as ArrayList<Point>
         getLocation()
         return START_STICKY
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val intent = Intent("your_intent_filter")
+        intent.putExtra("POINT_LIST", pointList)
+        Timber.d("onStartCommand onDestroy${pointList.size}")
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 }

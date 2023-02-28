@@ -1,11 +1,18 @@
-package com.hqnguyen.syl
+package com.hqnguyen.syl.utils
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.*
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Bundle
+import android.os.Parcelable
 import android.provider.MediaStore
 import androidx.core.content.ContextCompat
+import com.hqnguyen.syl.R
+import java.io.Serializable
 
 
 fun Bitmap.addBorder(borderSize: Float, color: Int): Bitmap? {
