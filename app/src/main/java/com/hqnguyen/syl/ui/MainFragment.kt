@@ -1,7 +1,6 @@
 package com.hqnguyen.syl.ui
 
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
@@ -17,7 +16,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
         userVM.user.observe(viewLifecycleOwner) { user ->
             lifecycleScope.launch {
                 delay(500)
-                if (!true) {
+                if (user == null) {
                     navigation(R.id.loginFragment)
                 } else {
                     navigation(R.id.homeFragment)
