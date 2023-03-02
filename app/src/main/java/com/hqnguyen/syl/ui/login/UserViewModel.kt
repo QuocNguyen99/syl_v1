@@ -17,4 +17,8 @@ class UserViewModel : ViewModel() {
             _uriAvatarUser.value = it
         }
     }
+
+    fun login(){
+        _user.value = "TEST"
+    }
 }

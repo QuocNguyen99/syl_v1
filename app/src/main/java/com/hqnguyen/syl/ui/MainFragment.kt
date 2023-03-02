@@ -17,9 +17,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
             lifecycleScope.launch {
                 delay(500)
                 if (user == null) {
-                    navigation(R.id.loginFragment)
+                    navigation(R.id.action_mainFragment_to_loginFragment)
                 } else {
-                    navigation(R.id.homeFragment)
+                    navigation(R.id.action_mainFragment_to_homeFragment)
                 }
             }
         }

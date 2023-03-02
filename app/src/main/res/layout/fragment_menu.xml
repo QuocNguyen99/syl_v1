@@ -32,7 +32,7 @@
                 style="@style/TextView.SubHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your image display"
+                android:text="@string/your_image_display"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -77,15 +77,16 @@
                 style="@style/TextView.SubHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="History"
+                android:text="@string/history_record"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/tvTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_12dp"
-                android:text="Totla: 11"
+                android:text="Total: 0"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tvTileCardHistory"
                 app:layout_constraintTop_toBottomOf="@id/tvTileCardHistory" />

@@ -1,18 +1,14 @@
 package com.hqnguyen.syl.utils
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.*
 import android.net.Uri
 import android.os.Build
-import android.os.Build.VERSION.SDK_INT
-import android.os.Bundle
-import android.os.Parcelable
 import android.provider.MediaStore
 import androidx.core.content.ContextCompat
 import com.hqnguyen.syl.R
-import java.io.Serializable
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 fun Bitmap.addBorder(borderSize: Float, color: Int): Bitmap? {
@@ -85,10 +81,17 @@ fun Uri.convertToBitmap(context: Context): Bitmap? {
 }
 
 fun Uri.convertToAvatar(context: Context): Bitmap? {
-    var avatarMarker = this.convertToBitmap(context)
+    val avatarMarker = this.convertToBitmap(context)
     avatarMarker?.let { bitmap ->
-        val bitmapHaveSize = bitmap?.let { Bitmap.createScaledBitmap(it, 80, 80, false) }
+        val bitmapHaveSize = bitmap.let { Bitmap.createScaledBitmap(it, 80, 80, false) }
         return bitmapHaveSize?.addBorder(5F, ContextCompat.getColor(context, R.color.blue))
     }
     return null
+}
+
+fun String.getDate(dateFormat: String = "dd/MM/yyyy hh:mm"): String {
+    val formatter = SimpleDateFormat(dateFormat)
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = this.toLong()
+    return formatter.format(calendar.time)
 }

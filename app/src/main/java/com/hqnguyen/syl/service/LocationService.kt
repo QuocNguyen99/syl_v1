@@ -33,10 +33,12 @@ class LocationService : Service() {
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-                if (locationResult.lastLocation?.longitude == pointList[pointList.size - 1].longitude()
-                    && locationResult.lastLocation?.latitude == pointList[pointList.size - 1].latitude()
-                )
-                    return
+                if (pointList.size != 0) {
+                    if (locationResult.lastLocation?.longitude == pointList[pointList.size - 1].longitude()
+                        && locationResult.lastLocation?.latitude == pointList[pointList.size - 1].latitude()
+                    )
+                        return
+                }
                 Timber.d("doWork notification ${locationResult.lastLocation?.longitude}")
                 pointList.add(
                     Point.fromLngLat(
@@ -101,9 +103,13 @@ class LocationService : Service() {
             .build()
     }
 
+    @Suppress("DEPRECATION")
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(1, notificationToDisplayServiceInfo())
+
         val data = intent?.getSerializableExtra("pointList") as ArrayList<Point>
+
         Timber.d("onStartCommand ${data.size}")
         pointList = pointList.plus(data) as ArrayList<Point>
         getLocation()

@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Looper
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.hqnguyen.syl.R
@@ -33,6 +34,8 @@ import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.locationcomponent.location
 import timber.log.Timber
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate) {
 
@@ -43,6 +46,8 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     }
 
     private val userVM: UserViewModel by activityViewModels()
+    private lateinit var mapVM: MapViewModel
+
     private var locationBroadCast: BroadcastReceiver? = null
 
     private var isRecording = false
@@ -56,12 +61,13 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     private var currentPoint: Point? = null
     private var prePoint: Point? = null
     private var pointList = arrayListOf<Point>()
+    private var timeStart: String = ""
 
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var annotationApi: AnnotationPlugin? = null
 
+    private var annotationApi: AnnotationPlugin? = null
     private var pointAnnotationManager: PointAnnotationManager? = null
     private var pointAnnotationOptions: PointAnnotationOptions? = null
 
@@ -75,8 +81,14 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
         super.onCreate(savedInstanceState)
         stopService()
     }
+
     override fun onViewCreated() {
         annotationApi = binding.mapView.annotations
+        mapVM = ViewModelProvider(
+            requireActivity(),
+            MapViewModelFactory(context = requireContext())
+        )[MapViewModel::class.java]
+
         initMapbox()
         intEvent()
         initBroadCast()
@@ -103,17 +115,16 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun initBroadCast() {
         locationBroadCast = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 Timber.d("onStartCommand initBroadCast ")
                 intent.extras?.let {
-                    var data :ArrayList<Point>
-                    when {
-                        Build.VERSION.SDK_INT >= 33 -> data = it.getSerializable("POINT_LIST", ArrayList::class.java) as ArrayList<Point>
-                        else -> @Suppress("DEPRECATION") data = it.getSerializable("POINT_LIST") as ArrayList<Point>
+                    val data: ArrayList<Point> = when {
+                        Build.VERSION.SDK_INT >= 33 -> it.getSerializable("POINT_LIST", ArrayList::class.java) as ArrayList<Point>
+                        else -> it.getSerializable("POINT_LIST") as ArrayList<Point>
                     }
-                    Timber.d("onStartCommand initBroadCast: ${data.size}")
                     pointList = data.plus(pointList) as ArrayList<Point>
                 }
             }
@@ -126,26 +137,17 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
                 if (isRecording) {
                     binding.fabRecordLocation.setImageResource(R.drawable.ic_play)
                     stopService()
+                    mapVM.getListLocationFormLocal()
                 } else {
                     binding.fabRecordLocation.setImageResource(R.drawable.ic_resume)
                     startService()
                 }
                 isRecording = !isRecording
+                timeStart = Calendar.getInstance().timeInMillis.toString()
             } else {
                 createLocationRequest()
             }
         }
-    }
-
-    private fun startService() {
-        val serviceIntent = Intent(context, LocationService::class.java)
-        serviceIntent.putExtra("pointList", pointList)
-        requireContext().startForegroundService(serviceIntent)
-    }
-
-    private fun stopService() {
-        val serviceIntent = Intent(context, LocationService::class.java)
-        requireContext().stopService(serviceIntent)
     }
 
     private fun initMapbox() {
@@ -156,10 +158,23 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
                 enabled = avatarMarker == null
                 pulsingEnabled = avatarMarker == null
             }
+
             if (longitude != 0.0 && latitude != 0.0) {
                 updatePositionCamera()
             }
         }
+    }
+
+    private fun startService() {
+        val serviceIntent = Intent(context, LocationService::class.java)
+        serviceIntent.putExtra("pointList", pointList)
+        Timber.d("pointList: ${pointList.size}")
+        requireContext().startForegroundService(serviceIntent)
+    }
+
+    private fun stopService() {
+        val serviceIntent = Intent(context, LocationService::class.java)
+        requireContext().stopService(serviceIntent)
     }
 
     @SuppressLint("MissingPermission")
@@ -172,15 +187,20 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
                 locationCallback = object : LocationCallback() {
                     override fun onLocationResult(locationResult: LocationResult) {
                         super.onLocationResult(locationResult)
+                        Timber.d("onLocationResult longitude: $longitude -- latitude: $latitude ")
                         if (locationResult.lastLocation?.longitude == longitude && locationResult.lastLocation?.latitude == latitude)
                             return
                         preLongitude = longitude
                         preLatitude = latitude
                         longitude = locationResult.lastLocation?.longitude ?: 0.0
                         latitude = locationResult.lastLocation?.latitude ?: 0.0
-                        pointList.add(Point.fromLngLat(longitude, latitude))
-                        Timber.d("onLocationResult longitude: $longitude -- latitude: $latitude ")
+                        val point = Point.fromLngLat(longitude, latitude)
+                        pointList.add(point)
+
                         animationWhenMoving()
+                        if (isRecording) {
+                            mapVM.saveLocationToLocal(point, timeStart)
+                        }
                         if (pointList.size >= 2) {
                             if (!isCreatedPolylineManager) {
                                 isCreatedPolylineManager = true
