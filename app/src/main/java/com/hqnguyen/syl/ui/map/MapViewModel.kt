@@ -1,10 +1,11 @@
 package com.hqnguyen.syl.ui.map
 
-import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
 import android.location.Location
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hqnguyen.syl.base.config.LocalDatabase
 import com.hqnguyen.syl.data.ListLocation
 import com.hqnguyen.syl.data.local.LocationRepository
@@ -13,7 +14,6 @@ import com.mapbox.geojson.Point
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.collections.ArrayList
 
 class MapViewModel(context: Context) : ViewModel() {
 
@@ -32,7 +32,13 @@ class MapViewModel(context: Context) : ViewModel() {
     fun saveLocationToLocal(point: Point, timeStart: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                repoLocation.insertLocation(LocationEntity(lng = point.longitude(), lat = point.latitude(), timeStart = timeStart))
+                repoLocation.insertLocation(
+                    LocationEntity(
+                        lng = point.longitude(),
+                        lat = point.latitude(),
+                        timeStart = timeStart
+                    )
+                )
                 Timber.d("onObserverLiveData timeStart $timeStart")
             } catch (ex: java.lang.Exception) {
                 Timber.e(ex.message)
@@ -52,8 +58,18 @@ class MapViewModel(context: Context) : ViewModel() {
                         sameTimeList.add(Point.fromLngLat(it.lng, it.lat))
                     } else {
                         timeStart = it.timeStart
-                        newList.add(ListLocation(timeStart, ArrayList(sameTimeList.map { point -> point }), calculator(ArrayList(sameTimeList.map { point -> point }))))
-                        sameTimeList.clear()
+                        if (!timeStart.isNullOrEmpty()) {
+                            newList.add(
+                                ListLocation(
+                                    timeStart,
+                                    ArrayList(sameTimeList.map { point -> point }),
+                                    calculator(ArrayList(sameTimeList.map { point -> point }))
+                                )
+                            )
+                            sameTimeList.clear()
+                        } else {
+                            sameTimeList.add(Point.fromLngLat(it.lng, it.lat))
+                        }
                     }
                 }
                 _listLocation.postValue(newList)

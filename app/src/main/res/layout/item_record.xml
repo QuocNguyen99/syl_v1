@@ -11,17 +11,19 @@
         <ImageView
             android:layout_margin="20dp"
             android:id="@+id/imgAvatar"
-            android:layout_width="@dimen/_50dp"
-            android:layout_height="@dimen/_50dp"
+            android:layout_width="@dimen/_70dp"
+            android:layout_height="@dimen/_70dp"
             android:src="@drawable/ic_close"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:textColor="@color/C0C0C0"
             android:text="12/03/2022"
             android:id="@+id/tvDate"
-            style="@style/TextView.SubHeader"
+            style="@style/TextView"
+            android:textSize="@dimen/_16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_20dp"
@@ -29,6 +31,7 @@
             app:layout_constraintTop_toTopOf="@id/imgAvatar" />
 
         <TextView
+            android:textSize="@dimen/_22sp"
             android:id="@+id/tvTotalKM"
             style="@style/TextView.Header"
             android:layout_marginTop="@dimen/_10dp"

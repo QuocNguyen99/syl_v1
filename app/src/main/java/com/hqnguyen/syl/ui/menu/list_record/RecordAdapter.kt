@@ -1,30 +1,30 @@
 package com.hqnguyen.syl.ui.menu.list_record
 
 import android.annotation.SuppressLint
-import android.location.Location
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.hqnguyen.syl.R
 import com.hqnguyen.syl.data.ListLocation
 import com.hqnguyen.syl.databinding.ItemRecordBinding
 import com.hqnguyen.syl.utils.getDate
-import com.mapbox.geojson.Point
-import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.acos
-import kotlin.math.cos
-import kotlin.math.sin
 
 class RecordAdapter : ListAdapter<ListLocation, RecordAdapter.ViewHolder>(DiffCallback()) {
 
-    class ViewHolder(private val binding: ItemRecordBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemRecordBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bindData(record: ListLocation) {
             binding.tvDate.text = record.startTime.getDate()
             binding.tvTotalKM.text = String.format("%.2f", (record.distance * 0.001)) + "Km"
+            if (adapterPosition % 2 == 0) {
+                binding.imgAvatar.setImageResource(R.mipmap.fake_polyline_1)
+            } else {
+                binding.imgAvatar.setImageResource(R.mipmap.fake_polyline_2)
+            }
         }
     }
 
