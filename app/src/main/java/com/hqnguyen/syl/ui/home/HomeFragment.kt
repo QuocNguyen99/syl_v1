@@ -1,13 +1,9 @@
 package com.hqnguyen.syl.ui.home
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
 import com.hqnguyen.syl.databinding.FragmentHomeBinding
-import com.hqnguyen.syl.service.LocationService
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
     override fun onViewCreated() {

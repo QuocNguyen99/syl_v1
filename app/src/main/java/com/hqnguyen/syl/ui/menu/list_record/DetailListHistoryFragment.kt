@@ -8,8 +8,6 @@ import com.hqnguyen.syl.base.BaseFragment
 import com.hqnguyen.syl.databinding.FragmentDetailListHistoryBinding
 import com.hqnguyen.syl.ui.map.MapViewModel
 import com.hqnguyen.syl.ui.map.MapViewModelFactory
-
-
 class DetailListHistoryFragment : BaseFragment<FragmentDetailListHistoryBinding>(FragmentDetailListHistoryBinding::inflate) {
 
     private lateinit var mapVM: MapViewModel
@@ -28,6 +26,18 @@ class DetailListHistoryFragment : BaseFragment<FragmentDetailListHistoryBinding>
         initEvent()
     }
 
+    @SuppressLint("SetTextI18n")
+    override fun onObserverLiveData() {
+        mapVM.listLocation.observe(viewLifecycleOwner) {
+            recordAdapter.submitList(it)
+            it.forEach { item ->
+                currentTarget += item.distance
+            }
+            binding.processTarget.progress = (currentTarget * 0.001).toInt()
+            binding.tvCurrentKM.text = String.format("%.2f", (currentTarget * 0.001)) + "Km"
+        }
+    }
+
     private fun initEvent() {
         binding.header.viewBack.setOnClickListener {
             navController.popBackStack()
@@ -43,17 +53,5 @@ class DetailListHistoryFragment : BaseFragment<FragmentDetailListHistoryBinding>
         val dividerItemDecoration = DividerItemDecoration(binding.rv.context, LinearLayoutManager(requireContext()).orientation)
         binding.rv.addItemDecoration(dividerItemDecoration)
         binding.processTarget.max = 50
-    }
-
-    @SuppressLint("SetTextI18n")
-    override fun onObserverLiveData() {
-        mapVM.listLocation.observe(viewLifecycleOwner) {
-            recordAdapter.submitList(it)
-            it.forEach { item ->
-                currentTarget += item.distance
-            }
-            binding.processTarget.progress = (currentTarget * 0.001).toInt()
-            binding.tvCurrentKM.text = String.format("%.2f", (currentTarget * 0.001)) + "Km"
-        }
     }
 }

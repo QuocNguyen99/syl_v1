@@ -10,7 +10,6 @@ import com.hqnguyen.syl.R
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 fun Bitmap.addBorder(borderSize: Float, color: Int): Bitmap? {
     val bitmap = this.copy(Bitmap.Config.ARGB_8888, true)
     val w: Float = bitmap.width.toFloat()

@@ -1,21 +1,17 @@
 package com.hqnguyen.syl.service
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.*
 import com.hqnguyen.syl.MainActivity
 import com.hqnguyen.syl.R
 import com.mapbox.geojson.Point
-import timber.log.Timber
-
 
 class LocationService : Service() {
 
@@ -27,6 +23,7 @@ class LocationService : Service() {
 
     private var pointList = arrayListOf<Point>()
 
+    @SuppressLint("MissingPermission")
     private fun getLocation() {
         val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 700).build()
 
@@ -39,7 +36,6 @@ class LocationService : Service() {
                     )
                         return
                 }
-                Timber.d("doWork notification ${locationResult.lastLocation?.longitude}")
                 pointList.add(
                     Point.fromLngLat(
                         locationResult.lastLocation?.longitude ?: 0.0,
@@ -51,17 +47,6 @@ class LocationService : Service() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
 
-        if (ActivityCompat.checkSelfPermission(
-                applicationContext,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                applicationContext,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
         fusedLocationClient?.requestLocationUpdates(
             locationRequest, locationCallback, Looper.getMainLooper()
         )
@@ -104,13 +89,9 @@ class LocationService : Service() {
     }
 
     @Suppress("DEPRECATION")
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(1, notificationToDisplayServiceInfo())
-
         val data = intent?.getSerializableExtra("pointList") as ArrayList<Point>
-
-        Timber.d("onStartCommand ${data.size}")
         pointList = pointList.plus(data) as ArrayList<Point>
         getLocation()
         return START_STICKY
@@ -120,7 +101,6 @@ class LocationService : Service() {
         super.onDestroy()
         val intent = Intent("your_intent_filter")
         intent.putExtra("POINT_LIST", pointList)
-        Timber.d("onStartCommand onDestroy${pointList.size}")
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 }

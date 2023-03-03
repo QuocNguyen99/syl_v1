@@ -13,7 +13,6 @@ import com.hqnguyen.syl.utils.getDate
 import java.util.*
 
 class RecordAdapter : ListAdapter<ListLocation, RecordAdapter.ViewHolder>(DiffCallback()) {
-
     class ViewHolder(private val binding: ItemRecordBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")

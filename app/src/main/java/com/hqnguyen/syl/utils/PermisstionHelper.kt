@@ -1,6 +1,5 @@
 package com.hqnguyen.syl.base
 
-import android.Manifest
 import android.Manifest.permission.*
 import android.app.Activity
 import android.content.Intent
@@ -65,15 +64,6 @@ object PermissionHelper {
         )
     }
 
-    fun isGranted(activity: Activity, vararg permissions: String): Boolean {
-        permissions.iterator().forEach {
-            if (ContextCompat.checkSelfPermission(activity, it) != PackageManager.PERMISSION_GRANTED) {
-                return false
-            }
-        }
-        return true
-    }
-
     private fun showDialogPermission(activity: Activity, permissions: List<String>) {
         val sb = StringBuilder()
         permissions.iterator().forEach { permission ->
@@ -95,5 +85,14 @@ object PermissionHelper {
                     it.data = Uri.fromParts("package", activity.packageName, null)
                 })
             }.show()
+    }
+
+    fun isGranted(activity: Activity, vararg permissions: String): Boolean {
+        permissions.iterator().forEach {
+            if (ContextCompat.checkSelfPermission(activity, it) != PackageManager.PERMISSION_GRANTED) {
+                return false
+            }
+        }
+        return true
     }
 }

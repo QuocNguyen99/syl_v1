@@ -118,13 +118,12 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     private fun initBroadCast() {
         locationBroadCast = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                Timber.d("onStartCommand initBroadCast ")
                 intent.extras?.let {
                     val data: ArrayList<Point> = when {
                         Build.VERSION.SDK_INT >= 33 -> it.getSerializable("POINT_LIST", ArrayList::class.java) as ArrayList<Point>
                         else -> it.getSerializable("POINT_LIST") as ArrayList<Point>
                     }
-                    pointList = data.plus(pointList) as ArrayList<Point>
+                    pointList = data
                 }
             }
         }
@@ -166,8 +165,9 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
 
     private fun startService() {
         val serviceIntent = Intent(context, LocationService::class.java)
+        Timber.e("startService ${pointList.size}")
         serviceIntent.putExtra("pointList", pointList)
-        Timber.d("pointList: ${pointList.size}")
+
         requireContext().startForegroundService(serviceIntent)
     }
 

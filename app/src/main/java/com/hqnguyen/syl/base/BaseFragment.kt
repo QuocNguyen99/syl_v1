@@ -35,5 +35,6 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
     }
 
     open fun onViewCreated() {}
+
     open fun onObserverLiveData() {}
 }
