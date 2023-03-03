@@ -164,11 +164,14 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     }
 
     private fun startService() {
-        val serviceIntent = Intent(context, LocationService::class.java)
-        Timber.e("startService ${pointList.size}")
-        serviceIntent.putExtra("pointList", pointList)
+        try {
+            val serviceIntent = Intent(context, LocationService::class.java)
+            serviceIntent.putExtra("pointList", pointList)
 
-        requireContext().startForegroundService(serviceIntent)
+            requireContext().startForegroundService(serviceIntent)
+        } catch (ex: Exception) {
+            Timber.e("startService fail: ${ex.message}")
+        }
     }
 
     private fun stopService() {
@@ -181,7 +184,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
         permissionControl(
             activity = requireActivity(),
             onGranted = {
-                locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 700).build()
+                locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 600).build()
 
                 locationCallback = object : LocationCallback() {
                     override fun onLocationResult(locationResult: LocationResult) {
@@ -266,7 +269,6 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
         ) {
             binding.mapView.getMapboxMap().setCamera(
                 CameraOptions.Builder().center(point ?: Point.fromLngLat(longitude, latitude))
-                    .zoom(14.0)
                     .build()
             )
         }
@@ -302,7 +304,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
                 updateAnnotationMarker()
                 updatePositionCamera()
             }
-            duration = 1000
+            duration = 600
             start()
         }
     }
