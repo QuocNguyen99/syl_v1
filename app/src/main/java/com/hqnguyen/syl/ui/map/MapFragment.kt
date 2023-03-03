@@ -20,10 +20,10 @@ import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
 import com.hqnguyen.syl.base.PermissionHelper
 import com.hqnguyen.syl.base.PermissionHelper.permissionControl
-import com.hqnguyen.syl.utils.convertToAvatar
 import com.hqnguyen.syl.databinding.FragmentMapBinding
 import com.hqnguyen.syl.service.LocationService
 import com.hqnguyen.syl.ui.login.UserViewModel
+import com.hqnguyen.syl.utils.convertToAvatar
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.Style
@@ -35,7 +35,6 @@ import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.locationcomponent.location
 import timber.log.Timber
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate) {
 
@@ -226,7 +225,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
             annotationConfig = AnnotationConfig(LAYER_MARKER_ID, LAYER_ID, null)
         )
         polylineAnnotationOptions = PolylineAnnotationOptions()
-            .withPoints(pointList)
+            .withPoints(ArrayList(pointList))
             .withLineColor(ContextCompat.getColor(requireContext(), R.color.blue))
             .withLineWidth(8.0)
             .withLineJoin(LineJoin.ROUND)
@@ -236,7 +235,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     }
 
     private fun updatePolyline() {
-        polylineAnnotation?.points = pointList
+        polylineAnnotation?.points = ArrayList(pointList)
         polylineAnnotationManager?.update(polylineAnnotation!!)
     }
 

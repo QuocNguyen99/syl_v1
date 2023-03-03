@@ -32,14 +32,7 @@ class MapViewModel(context: Context) : ViewModel() {
     fun saveLocationToLocal(point: Point, timeStart: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                repoLocation.insertLocation(
-                    LocationEntity(
-                        lng = point.longitude(),
-                        lat = point.latitude(),
-                        timeStart = timeStart
-                    )
-                )
-                Timber.d("onObserverLiveData timeStart $timeStart")
+                repoLocation.insertLocation(LocationEntity(lng = point.longitude(), lat = point.latitude(), timeStart = timeStart))
             } catch (ex: java.lang.Exception) {
                 Timber.e(ex.message)
             }
@@ -52,27 +45,30 @@ class MapViewModel(context: Context) : ViewModel() {
                 val response = repoLocation.getListLocation()
                 var timeStart = ""
                 val sameTimeList = arrayListOf<Point>()
-                val newList = arrayListOf<ListLocation>()
-                response.forEach {
+                val listLocationAfterParse = arrayListOf<ListLocation>()
+                response.forEachIndexed { index, it ->
+                    if (index == response.size - 1) {
+                        sameTimeList.add(Point.fromLngLat(it.lng, it.lat))
+                        listLocationAfterParse.add(
+                            ListLocation(timeStart, ArrayList(sameTimeList), calculator(ArrayList(sameTimeList)))
+                        )
+                        return@forEachIndexed
+                    }
                     if (it.timeStart == timeStart) {
                         sameTimeList.add(Point.fromLngLat(it.lng, it.lat))
                     } else {
-                        timeStart = it.timeStart
-                        if (!timeStart.isNullOrEmpty()) {
-                            newList.add(
-                                ListLocation(
-                                    timeStart,
-                                    ArrayList(sameTimeList.map { point -> point }),
-                                    calculator(ArrayList(sameTimeList.map { point -> point }))
-                                )
+                        if (timeStart.isNotEmpty()) {
+                            listLocationAfterParse.add(
+                                ListLocation(timeStart, ArrayList(sameTimeList), calculator(ArrayList(sameTimeList)))
                             )
                             sameTimeList.clear()
                         } else {
                             sameTimeList.add(Point.fromLngLat(it.lng, it.lat))
                         }
+                        timeStart = it.timeStart
                     }
                 }
-                _listLocation.postValue(newList)
+                _listLocation.postValue(listLocationAfterParse)
             } catch (ex: java.lang.Exception) {
                 Timber.e(ex.message)
             }

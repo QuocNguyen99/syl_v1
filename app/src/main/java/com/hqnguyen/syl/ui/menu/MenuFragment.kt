@@ -6,12 +6,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
-import com.hqnguyen.syl.utils.convertToAvatar
 import com.hqnguyen.syl.databinding.FragmentMenuBinding
 import com.hqnguyen.syl.ui.dialog.DialogUpdateImageFragment
 import com.hqnguyen.syl.ui.login.UserViewModel
 import com.hqnguyen.syl.ui.map.MapViewModel
 import com.hqnguyen.syl.ui.map.MapViewModelFactory
+import com.hqnguyen.syl.utils.convertToAvatar
 
 class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::inflate) {
     private val userVM: UserViewModel by activityViewModels()

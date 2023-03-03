@@ -10,8 +10,7 @@ import com.hqnguyen.syl.ui.map.MapViewModel
 import com.hqnguyen.syl.ui.map.MapViewModelFactory
 
 
-class DetailListHistoryFragment :
-    BaseFragment<FragmentDetailListHistoryBinding>(FragmentDetailListHistoryBinding::inflate) {
+class DetailListHistoryFragment : BaseFragment<FragmentDetailListHistoryBinding>(FragmentDetailListHistoryBinding::inflate) {
 
     private lateinit var mapVM: MapViewModel
 
@@ -41,11 +40,7 @@ class DetailListHistoryFragment :
             adapter = recordAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-        val dividerItemDecoration =
-            DividerItemDecoration(
-                binding.rv.context,
-                LinearLayoutManager(requireContext()).orientation
-            )
+        val dividerItemDecoration = DividerItemDecoration(binding.rv.context, LinearLayoutManager(requireContext()).orientation)
         binding.rv.addItemDecoration(dividerItemDecoration)
         binding.processTarget.max = 50
     }

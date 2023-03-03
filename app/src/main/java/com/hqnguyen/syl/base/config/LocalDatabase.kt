@@ -9,7 +9,6 @@ import com.hqnguyen.syl.data.local.entity.LocationEntity
 
 @Database(entities = [LocationEntity::class], version = 1)
 abstract class LocalDatabase : RoomDatabase() {
-
     abstract fun locationDao(): LocationDAO
 
     companion object {
@@ -18,10 +17,7 @@ abstract class LocalDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): LocalDatabase {
             if (databaseManager == null) {
-                databaseManager = Room.databaseBuilder(
-                    context, LocalDatabase::class.java,
-                    DB_NAME
-                )
+                databaseManager = Room.databaseBuilder(context, LocalDatabase::class.java, DB_NAME)
                     .fallbackToDestructiveMigration()
                     .build()
             }
