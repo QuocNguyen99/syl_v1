@@ -28,20 +28,6 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
         initData()
     }
 
-    @SuppressLint("SetTextI18n")
-    override fun onObserverLiveData() {
-        userVM.uriAvatarUser.observe(viewLifecycleOwner) {
-            it?.let { uri ->
-                val bitmap = uri.convertToAvatar(requireContext())
-                binding.imgAvatar.setImageBitmap(bitmap)
-            }
-        }
-
-        mapVM.listLocation.observe(viewLifecycleOwner) {
-            binding.tvTotal.text = "Total: " + it.size.toString()
-        }
-    }
-
     private fun initView() {
         binding.header.viewBack.isVisible = false
     }
@@ -59,5 +45,21 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
 
     private fun initData() {
         mapVM.getListLocationFormLocal()
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onObserverLiveData() {
+        userVM.uriAvatarUser.observe(viewLifecycleOwner) {
+            it?.let { uri ->
+                val bitmap = uri.convertToAvatar(requireContext())
+                binding.imgAvatar.setImageBitmap(bitmap)
+            }
+        }
+
+        mapVM.listLocation.observe(viewLifecycleOwner) {
+            it?.let {
+                binding.tvTotal.text = "Total: " + it.size.toString()
+            }
+        }
     }
 }

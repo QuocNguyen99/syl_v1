@@ -95,13 +95,18 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
 
     override fun onResume() {
         super.onResume()
-        locationBroadCast?.let { LocalBroadcastManager.getInstance(requireContext()).registerReceiver(it, IntentFilter("your_intent_filter")) }
+        locationBroadCast?.let {
+            LocalBroadcastManager.getInstance(requireContext())
+                .registerReceiver(it, IntentFilter("your_intent_filter"))
+        }
         createLocationRequest()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        locationBroadCast?.let { LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(it) }
+        locationBroadCast?.let {
+            LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(it)
+        }
     }
 
     override fun onObserverLiveData() {
@@ -120,7 +125,10 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
             override fun onReceive(context: Context, intent: Intent) {
                 intent.extras?.let {
                     val data: ArrayList<Point> = when {
-                        Build.VERSION.SDK_INT >= 33 -> it.getSerializable("POINT_LIST", ArrayList::class.java) as ArrayList<Point>
+                        Build.VERSION.SDK_INT >= 33 -> it.getSerializable(
+                            "POINT_LIST",
+                            ArrayList::class.java
+                        ) as ArrayList<Point>
                         else -> it.getSerializable("POINT_LIST") as ArrayList<Point>
                     }
                     pointList = data
@@ -131,11 +139,14 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
 
     private fun intEvent() {
         binding.fabRecordLocation.setOnClickListener {
-            if (PermissionHelper.isGranted(requireActivity(), *PermissionHelper.locationPermission)) {
+            if (PermissionHelper.isGranted(
+                    requireActivity(),
+                    *PermissionHelper.locationPermission
+                )
+            ) {
                 if (isRecording) {
                     binding.fabRecordLocation.setImageResource(R.drawable.ic_play)
                     stopService()
-                    mapVM.getListLocationFormLocal()
                 } else {
                     binding.fabRecordLocation.setImageResource(R.drawable.ic_resume)
                     startService()
@@ -184,7 +195,8 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
         permissionControl(
             activity = requireActivity(),
             onGranted = {
-                locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 600).build()
+                locationRequest =
+                    LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 700).build()
 
                 locationCallback = object : LocationCallback() {
                     override fun onLocationResult(locationResult: LocationResult) {
@@ -214,7 +226,8 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
                     }
                 }
 
-                fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+                fusedLocationClient =
+                    LocationServices.getFusedLocationProviderClient(requireContext())
 
                 fusedLocationClient.requestLocationUpdates(
                     locationRequest, locationCallback, Looper.getMainLooper()
@@ -224,9 +237,10 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     }
 
     private fun createPolyLine() {
-        polylineAnnotationManager = polylineAnnotationManager ?: annotationApi!!.createPolylineAnnotationManager(
-            annotationConfig = AnnotationConfig(LAYER_MARKER_ID, LAYER_ID, null)
-        )
+        polylineAnnotationManager =
+            polylineAnnotationManager ?: annotationApi!!.createPolylineAnnotationManager(
+                annotationConfig = AnnotationConfig(LAYER_MARKER_ID, LAYER_ID, null)
+            )
         polylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(ArrayList(pointList))
             .withLineColor(ContextCompat.getColor(requireContext(), R.color.blue))
