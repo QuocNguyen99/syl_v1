@@ -139,10 +139,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
 
     private fun intEvent() {
         binding.fabRecordLocation.setOnClickListener {
-            if (PermissionHelper.isGranted(
-                    requireActivity(),
-                    *PermissionHelper.locationPermission
-                )
+            if (PermissionHelper.isGranted(requireActivity(), *PermissionHelper.locationPermission)
             ) {
                 if (isRecording) {
                     binding.fabRecordLocation.setImageResource(R.drawable.ic_play)

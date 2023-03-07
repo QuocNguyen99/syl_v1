@@ -16,7 +16,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
         userVM.user.observe(viewLifecycleOwner) { user ->
             lifecycleScope.launch {
                 delay(500)
-                if (user == null) {
+                if (!user) {
                     navigation(R.id.action_mainFragment_to_loginFragment)
                 } else {
                     navigation(R.id.action_mainFragment_to_homeFragment)

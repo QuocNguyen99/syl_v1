@@ -30,6 +30,11 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
         onObserverLiveData()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     fun navigation(@IdRes actionId: Int) {
         navController.navigate(actionId)
     }

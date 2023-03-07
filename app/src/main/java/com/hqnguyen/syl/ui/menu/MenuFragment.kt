@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
 import com.hqnguyen.syl.databinding.FragmentMenuBinding
@@ -11,7 +12,9 @@ import com.hqnguyen.syl.ui.dialog.DialogUpdateImageFragment
 import com.hqnguyen.syl.ui.login.UserViewModel
 import com.hqnguyen.syl.ui.map.MapViewModel
 import com.hqnguyen.syl.ui.map.MapViewModelFactory
+import com.hqnguyen.syl.utils.DataHelper
 import com.hqnguyen.syl.utils.convertToAvatar
+import kotlinx.coroutines.launch
 
 class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::inflate) {
     private val userVM: UserViewModel by activityViewModels()
@@ -44,7 +47,7 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
     }
 
     private fun initData() {
-        mapVM.getListLocationFormLocal()
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -56,9 +59,12 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
             }
         }
 
-        mapVM.listLocation.observe(viewLifecycleOwner) {
-            it?.let {
-                binding.tvTotal.text = "Total: " + it.size.toString()
+        lifecycleScope.launch {
+            mapVM.getListLocationFormLocal().observe(viewLifecycleOwner) {
+                it?.let {
+                    val data = DataHelper.getInstance().convertData(it)
+                    binding.tvTotal.text = "Total: " + data.size.toString()
+                }
             }
         }
     }

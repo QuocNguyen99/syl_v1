@@ -1,5 +1,9 @@
 package com.hqnguyen.syl.ui.login
 
+import android.annotation.SuppressLint
+import android.text.InputType
+import android.text.method.PasswordTransformationMethod
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -8,9 +12,16 @@ import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
 import com.hqnguyen.syl.databinding.FragmentLoginBinding
 
+
 class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::inflate) {
 
     private val userVM: UserViewModel by activityViewModels()
+    private var isShowPassword = false
+
+    companion object {
+        const val username = "samsung"
+        const val password = "samsung123"
+    }
 
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     override fun onViewCreated() {
@@ -19,17 +30,54 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         initEvent()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initEvent() {
         binding.btnGogle.setOnClickListener {
-            signIn()
         }
+
         binding.btnLogin.setOnClickListener {
-            userVM.login()
-            navController.navigate(R.id.action_loginFragment_to_homeFragment)
+            val username = binding.edtUsername.text.toString()
+            val password = binding.edtPassword.text.toString()
+            userVM.login(username = username, password = password)
+
+        }
+
+        binding.edtUsername.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.layoutUsername.setBackgroundResource(R.drawable.edittext_outline_focus)
+            } else {
+                binding.layoutUsername.setBackgroundResource(R.drawable.edittext_outline)
+            }
+        }
+
+        binding.edtPassword.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.layoutPassword.setBackgroundResource(R.drawable.edittext_outline_focus)
+            } else {
+                binding.layoutPassword.setBackgroundResource(R.drawable.edittext_outline)
+            }
+        }
+
+        binding.imgHide.setOnClickListener {
+            if (isShowPassword) {
+                binding.imgHide.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.lock_eye))
+                binding.edtPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                binding.edtPassword.setSelection(binding.edtPassword.text.toString().toCharArray().size)
+            } else {
+                binding.imgHide.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.eye))
+                binding.edtPassword.inputType = InputType.TYPE_CLASS_TEXT
+                binding.edtPassword.transformationMethod = null
+                binding.edtPassword.setSelection(binding.edtPassword.text.toString().toCharArray().size)
+            }
+            isShowPassword = !isShowPassword
         }
     }
 
-    private fun signIn() {
-        //TODO
+    override fun onObserverLiveData() {
+        userVM.user.observe(viewLifecycleOwner) {
+            if (it) {
+                navController.navigate(R.id.action_loginFragment_to_homeFragment)
+            }
+        }
     }
 }

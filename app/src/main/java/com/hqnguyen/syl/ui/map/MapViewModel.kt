@@ -21,11 +21,7 @@ class MapViewModel(context: Context) : ViewModel() {
         val dbManager = LocalDatabase.getInstance(context)
         val locationDao = dbManager.locationDao()
         repoLocation = LocationRepository(locationDao)
-        getListLocationFormLocal()
     }
-
-    private val _listLocation = MutableLiveData<List<LocationEntity>>(listOf())
-    val listLocation: LiveData<List<LocationEntity>> = _listLocation
 
     fun saveLocationToLocal(point: Point, timeStart: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -37,9 +33,7 @@ class MapViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun getListLocationFormLocal() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _listLocation.postValue(repoLocation.getListLocation().value)
-        }
+    suspend fun getListLocationFormLocal():LiveData<List<LocationEntity>> {
+        return repoLocation.getListLocation()
     }
 }
