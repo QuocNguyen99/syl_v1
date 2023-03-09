@@ -99,7 +99,8 @@
                 android:src="@drawable/lock_eye"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/layoutPassword"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -167,7 +168,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_60dp"
             android:layout_marginTop="@dimen/_24dp"
-            android:background="@drawable/border_button_red"
+            android:background="@drawable/ripple_red"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/tvOtherlogin"
             app:layout_constraintTop_toBottomOf="@id/line_1">
@@ -201,7 +202,8 @@
             android:layout_height="@dimen/_60dp"
             android:layout_marginTop="@dimen/_12dp"
             android:layout_marginBottom="@dimen/_24dp"
-            android:background="@drawable/border_button_blue"
+            android:background="@drawable/ripple_blue"
+            android:clickable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/tvOtherlogin"
             app:layout_constraintTop_toBottomOf="@id/btnGogle">

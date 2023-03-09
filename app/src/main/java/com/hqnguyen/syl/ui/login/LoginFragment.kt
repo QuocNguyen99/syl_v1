@@ -1,6 +1,5 @@
 package com.hqnguyen.syl.ui.login
 
-import android.annotation.SuppressLint
 import android.text.InputType
 import android.text.method.PasswordTransformationMethod
 import androidx.core.content.ContextCompat
@@ -10,6 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
+import com.hqnguyen.syl.data.InfoDialog
 import com.hqnguyen.syl.databinding.FragmentLoginBinding
 
 
@@ -30,16 +30,25 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         initEvent()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun initEvent() {
         binding.btnGogle.setOnClickListener {
+            showDialog(InfoDialog("Google login", "Feature will coming soon", R.drawable.ic_google))
+        }
+
+        binding.btnFacebook.setOnClickListener {
+            showDialog(
+                InfoDialog(
+                    "Facebook login",
+                    "Feature will coming soon",
+                    R.drawable.ic_facebook
+                )
+            )
         }
 
         binding.btnLogin.setOnClickListener {
             val username = binding.edtUsername.text.toString()
             val password = binding.edtPassword.text.toString()
             userVM.login(username = username, password = password)
-
         }
 
         binding.edtUsername.setOnFocusChangeListener { _, hasFocus ->
@@ -60,14 +69,29 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
         binding.imgHide.setOnClickListener {
             if (isShowPassword) {
-                binding.imgHide.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.lock_eye))
-                binding.edtPassword.transformationMethod = PasswordTransformationMethod.getInstance()
-                binding.edtPassword.setSelection(binding.edtPassword.text.toString().toCharArray().size)
+                binding.imgHide.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.lock_eye
+                    )
+                )
+                binding.edtPassword.transformationMethod =
+                    PasswordTransformationMethod.getInstance()
+                binding.edtPassword.setSelection(
+                    binding.edtPassword.text.toString().toCharArray().size
+                )
             } else {
-                binding.imgHide.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.eye))
+                binding.imgHide.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.eye
+                    )
+                )
                 binding.edtPassword.inputType = InputType.TYPE_CLASS_TEXT
                 binding.edtPassword.transformationMethod = null
-                binding.edtPassword.setSelection(binding.edtPassword.text.toString().toCharArray().size)
+                binding.edtPassword.setSelection(
+                    binding.edtPassword.text.toString().toCharArray().size
+                )
             }
             isShowPassword = !isShowPassword
         }
