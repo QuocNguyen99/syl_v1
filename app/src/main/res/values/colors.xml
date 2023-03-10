@@ -11,5 +11,5 @@
     <color name="blue_alpha">#D33498DB</color>
     <color name="C0C0C0">#C0C0C0</color>
     <color name="red">#FF0000</color>
-    <color name="colorDialogBackground">#CC454545</color>
+    <color name="colorDialogBackground">@android:color/transparent</color>
 </resources>

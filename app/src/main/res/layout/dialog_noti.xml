@@ -67,9 +67,8 @@
             android:text="OK"
             android:textStyle="bold"
             app:cornerRadius="@dimen/_8dp"
+            app:backgroundTint="@color/blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvMessage" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

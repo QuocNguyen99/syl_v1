@@ -1,4 +1,4 @@
-package com.hqnguyen.syl.data.local
+package com.hqnguyen.syl.data.local.repository
 
 import androidx.lifecycle.LiveData
 import com.hqnguyen.syl.data.local.dao.LocationDAO

@@ -3,28 +3,32 @@ package com.hqnguyen.syl.ui.login
 import android.text.InputType
 import android.text.method.PasswordTransformationMethod
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
 import com.hqnguyen.syl.data.InfoDialog
+import com.hqnguyen.syl.data.local.DataStoreRepositoryImpl
 import com.hqnguyen.syl.databinding.FragmentLoginBinding
 
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::inflate) {
 
-    private val userVM: UserViewModel by activityViewModels()
+    private lateinit var userVM: UserViewModel
     private var isShowPassword = false
+    private lateinit var mGoogleSignInClient: GoogleSignInClient
 
     companion object {
         const val username = "samsung"
         const val password = "samsung123"
     }
 
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
     override fun onViewCreated() {
+        val dataStore = DataStoreRepositoryImpl(requireContext())
+        userVM = ViewModelProvider(requireActivity(), UserViewModelFactory(dataStore))[UserViewModel::class.java]
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         initEvent()
@@ -36,13 +40,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         }
 
         binding.btnFacebook.setOnClickListener {
-            showDialog(
-                InfoDialog(
-                    "Facebook login",
-                    "Feature will coming soon",
-                    R.drawable.ic_facebook
-                )
-            )
+            showDialog(InfoDialog("Facebook login", "Feature will coming soon", R.drawable.ic_facebook))
         }
 
         binding.btnLogin.setOnClickListener {

@@ -1,20 +1,41 @@
 package com.hqnguyen.syl.ui.dialog
 
-import com.hqnguyen.syl.base.BaseFragment
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.hqnguyen.syl.databinding.DialogNotiBinding
 
-class NotifyDialog : BaseFragment<DialogNotiBinding>(DialogNotiBinding::inflate) {
+class NotifyDialog : BottomSheetDialogFragment() {
 
-    override fun onViewCreated() {
+    private val dialogVM: DialogViewModel by activityViewModels()
+
+    private var _binding: DialogNotiBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = DialogNotiBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initEvent()
+        onObserverLiveData()
+    }
+
+    private fun initEvent() {
         binding.btnOk.setOnClickListener {
-            navController.popBackStack()
+            dismiss()
         }
         binding.viewDismiss.setOnClickListener {
-            navController.popBackStack()
+            dismiss()
         }
     }
 
-    override fun onObserverLiveData() {
+    private fun onObserverLiveData() {
         dialogVM.infoDialog.observe(viewLifecycleOwner) {
             it?.let {
                 binding.tvTitle.text = it.title
@@ -22,11 +43,6 @@ class NotifyDialog : BaseFragment<DialogNotiBinding>(DialogNotiBinding::inflate)
                 binding.logoDialog.setImageResource(it.image)
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        dialogVM.clearDialog()
     }
 }
 

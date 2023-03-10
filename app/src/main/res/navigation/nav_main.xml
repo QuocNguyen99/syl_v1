@@ -49,8 +49,4 @@
         android:label="fragment_detail_list_history"
         tools:layout="@layout/fragment_detail_list_history" />
 
-    <fragment
-        android:id="@+id/notifyDialog"
-        android:name="com.hqnguyen.syl.ui.dialog.NotifyDialog"
-        android:label="NotifyDialog" />
 </navigation>

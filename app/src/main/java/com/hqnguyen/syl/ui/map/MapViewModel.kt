@@ -2,11 +2,10 @@ package com.hqnguyen.syl.ui.map
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hqnguyen.syl.base.config.LocalDatabase
-import com.hqnguyen.syl.data.local.LocationRepository
+import com.hqnguyen.syl.data.local.repository.LocationRepository
 import com.hqnguyen.syl.data.local.entity.LocationEntity
 import com.mapbox.geojson.Point
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +32,7 @@ class MapViewModel(context: Context) : ViewModel() {
         }
     }
 
-    suspend fun getListLocationFormLocal():LiveData<List<LocationEntity>> {
+    fun getListLocationFormLocal():LiveData<List<LocationEntity>> {
         return repoLocation.getListLocation()
     }
 }
