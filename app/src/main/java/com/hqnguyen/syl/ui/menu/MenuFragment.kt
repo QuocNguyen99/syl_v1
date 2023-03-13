@@ -36,12 +36,12 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
     }
 
     private fun initEvent() {
-        binding.cardAvatar.setOnClickListener {
+        binding.imgAvatar.setOnClickListener {
             val dialog = DialogUpdateImageFragment()
             dialog.show(childFragmentManager, "")
         }
 
-        binding.cardHistory.setOnClickListener {
+        binding.cardList.setOnClickListener {
             navigation(R.id.action_homeFragment_to_detailListHistoryFragment)
         }
     }
@@ -63,7 +63,7 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
             mapVM.getListLocationFormLocal().observe(viewLifecycleOwner) {
                 it?.let {
                     val data = DataHelper.getInstance().convertData(it)
-                    binding.tvTotal.text = "Total: " + data.size.toString()
+//                    binding.tvTotal.text = "Total: " + data.size.toString()
                 }
             }
         }

@@ -3,103 +3,207 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.menu.MenuFragment">
 
     <include
         android:id="@+id/header"
         layout="@layout/header_layout" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardAvatar"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_24dp"
-        app:cardCornerRadius="@dimen/_12dp"
-        android:layout_marginTop="@dimen/_26dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/_12dp">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tvTileCardAvatar"
-                style="@style/TextView.SubHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/your_image_display"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12dp"
-                android:text="11:30 22-10-2023"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@id/tvTileCardAvatar"
-                app:layout_constraintTop_toBottomOf="@id/tvTileCardAvatar" />
-
-            <ImageView
+            <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/imgAvatar"
-                android:layout_width="@dimen/_50dp"
-                android:layout_height="@dimen/_50dp"
+                android:layout_width="@dimen/_80dp"
+                android:layout_height="@dimen/_80dp"
+                android:layout_marginHorizontal="@dimen/_24dp"
+                android:layout_marginTop="@dimen/_24dp"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/avatar_default"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardHistory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/_24dp"
-        app:cardCornerRadius="@dimen/_12dp"
-        android:layout_marginTop="@dimen/_12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardAvatar">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/_12dp">
-
-            <TextView
-                android:id="@+id/tvTileCardHistory"
-                style="@style/TextView.SubHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/history_record"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:riv_corner_radius="@dimen/_50dp" />
 
             <TextView
-                android:id="@+id/tvTotal"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvUsername"
+                style="@style/TextView.SubHeader"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12dp"
-                android:text="Total: 0"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@id/tvTileCardHistory"
-                app:layout_constraintTop_toBottomOf="@id/tvTileCardHistory" />
+                android:layout_marginHorizontal="@dimen/_24dp"
+                android:layout_marginVertical="@dimen/_12dp"
+                android:text="Account test"
+                android:textAlignment="center"
+                app:layout_constraintTop_toBottomOf="@id/imgAvatar" />
 
-            <ImageView
-                android:layout_width="@dimen/_20dp"
-                android:layout_height="@dimen/_20dp"
-                android:src="@drawable/ic_back"
-                android:rotation="180"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/layoutSetting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_24dp"
+                android:layout_marginTop="@dimen/_12dp"
+                app:cardCornerRadius="@dimen/_12dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvUsername">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/_4dp">
+
+                    <com.hqnguyen.syl.ui.custom_view.CardItem
+                        android:id="@+id/cardAccount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:carTitle="My account"
+                        app:cardDescription="Make changes to your account"
+                        app:cardLogo="@drawable/ic_person_outline"
+                        app:cardSwitch="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_2dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cardAccount" />
+
+                    <com.hqnguyen.syl.ui.custom_view.CardItem
+                        android:id="@+id/cardList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:carTitle="History record"
+                        app:cardDescription="All record in month"
+                        app:cardLogo="@drawable/ic_distance"
+                        app:cardSwitch="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cardAccount" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_2dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cardList" />
+
+                    <com.hqnguyen.syl.ui.custom_view.CardItem
+                        android:id="@+id/cardAuth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:carTitle="Face ID/ Touch ID"
+                        app:cardDescription="Make changes to your account"
+                        app:cardLogo="@drawable/ic_biometric"
+                        app:cardSwitch="false"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cardList" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_1dp"
+                        app:dividerColor="@color/C0C0C0"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cardAuth" />
+
+                    <com.hqnguyen.syl.ui.custom_view.CardItem
+                        android:id="@+id/cardTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:carTitle="Dark mode"
+                        app:cardDescription="Change your theme"
+                        app:cardLogo="@drawable/ic_theme"
+                        app:cardSwitch="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cardAuth" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_1dp"
+                        app:dividerColor="@color/C0C0C0"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cardTheme" />
+
+                    <com.hqnguyen.syl.ui.custom_view.CardItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:carTitle="Log out"
+                        app:cardDescription="Change your theme"
+                        app:cardLogo="@drawable/ic_logout"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cardTheme" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/layoutAboutMe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_24dp"
+                android:layout_marginTop="@dimen/_32dp"
+                android:layout_marginBottom="@dimen/_12dp"
+                app:cardCornerRadius="@dimen/_12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:tint="@color/C0C0C0" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutSetting">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/_4dp">
+
+                    <com.hqnguyen.syl.ui.custom_view.CardItem
+                        android:id="@+id/cardSupport"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:carTitle="Help &amp; Support"
+                        app:cardLogo="@drawable/ic_notifications"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_1dp"
+                        app:dividerColor="@color/C0C0C0"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cardSupport" />
+
+                    <com.hqnguyen.syl.ui.custom_view.CardItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:carTitle="About this app"
+                        app:cardLogo="@drawable/ic_question"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cardSupport" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+
+    </androidx.core.widget.NestedScrollView>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

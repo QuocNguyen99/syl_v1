@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CardItem">
+        <attr name="carTitle" format="string" />
+        <attr name="cardDescription" format="string" />
+        <attr name="cardLogo" format="reference" />
+        <attr name="cardSwitch" format="boolean" />
+    </declare-styleable>
+</resources>
