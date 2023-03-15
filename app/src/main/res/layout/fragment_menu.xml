@@ -67,7 +67,7 @@
                         android:layout_height="wrap_content"
                         app:carTitle="My account"
                         app:cardDescription="Make changes to your account"
-                        app:cardLogo="@drawable/ic_person_outline"
+                        app:cardLogo="@mipmap/ic_account"
                         app:cardSwitch="false"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         app:carTitle="Dark mode"
                         app:cardDescription="Change your theme"
-                        app:cardLogo="@drawable/ic_theme"
+                        app:cardLogo="@mipmap/ic_moon"
                         app:cardSwitch="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -140,11 +140,12 @@
                         app:layout_constraintTop_toBottomOf="@id/cardTheme" />
 
                     <com.hqnguyen.syl.ui.custom_view.CardItem
+                        android:id="@+id/cardLogout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:carTitle="Log out"
-                        app:cardDescription="Change your theme"
-                        app:cardLogo="@drawable/ic_logout"
+                        app:cardDescription="Log out your account"
+                        app:cardLogo="@mipmap/ic_logout"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/cardTheme" />
@@ -175,7 +176,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:carTitle="Help &amp; Support"
-                        app:cardLogo="@drawable/ic_notifications"
+                        app:cardLogo="@mipmap/ic_question"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
@@ -190,20 +191,17 @@
                         app:layout_constraintTop_toBottomOf="@id/cardSupport" />
 
                     <com.hqnguyen.syl.ui.custom_view.CardItem
+                        android:id="@+id/cardAbout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:carTitle="About this app"
-                        app:cardLogo="@drawable/ic_question"
+                        app:cardLogo="@mipmap/ic_infomartion"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/cardSupport" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.core.widget.NestedScrollView>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

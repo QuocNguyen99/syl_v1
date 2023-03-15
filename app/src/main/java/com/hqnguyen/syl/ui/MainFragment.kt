@@ -11,7 +11,6 @@ import com.hqnguyen.syl.ui.login.UserViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate) {
     private lateinit var userVM: UserViewModel
@@ -25,7 +24,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
         lifecycleScope.launch(Dispatchers.Main) {
             delay(1000)
             userVM.wasLogin.observe(viewLifecycleOwner) { user ->
-                Timber.d("onObserverLiveData user:$user")
                 lifecycleScope.launch {
                     delay(500)
                     if (!user) {

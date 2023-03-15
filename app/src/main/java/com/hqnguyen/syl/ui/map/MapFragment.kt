@@ -91,6 +91,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
         initMapbox()
         intEvent()
         initBroadCast()
+        userVM.getTokenAndCheckWasLogin()
     }
 
     override fun onResume() {

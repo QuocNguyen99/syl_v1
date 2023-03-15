@@ -5,6 +5,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
 import com.hqnguyen.syl.databinding.FragmentMenuBinding
@@ -40,10 +41,17 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
             val dialog = DialogUpdateImageFragment()
             dialog.show(childFragmentManager, "")
         }
-
         binding.cardList.setOnClickListener {
             navigation(R.id.action_homeFragment_to_detailListHistoryFragment)
         }
+        binding.cardLogout.setOnClickListener {
+            userVM.logout()
+        }
+        binding.cardAuth.setOnClickListener { }
+        binding.cardSupport.setOnClickListener { }
+        binding.cardTheme.setOnClickListener { }
+        binding.cardAbout.setOnClickListener { }
+        binding.cardAccount.setOnClickListener { }
     }
 
     private fun initData() {
@@ -59,6 +67,13 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
             }
         }
 
+        userVM.wasLogin.observe(viewLifecycleOwner) {
+            if (!it) {
+                navController.navigate(R.id.loginFragment)
+                clearBackStack()
+            }
+        }
+
         lifecycleScope.launch {
             mapVM.getListLocationFormLocal().observe(viewLifecycleOwner) {
                 it?.let {
@@ -67,5 +82,10 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
                 }
             }
         }
+    }
+
+    private fun clearBackStack() {
+        NavOptions.Builder().setLaunchSingleTop(true)
+        NavOptions.Builder().setPopUpTo(R.id.nav_main, true)
     }
 }

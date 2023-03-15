@@ -17,7 +17,7 @@
 
     <style name="TextView.SubHeader" parent="TextView">
         <item name="android:textSize">@dimen/_16sp</item>
-        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
     </style>
 
     <dimen name="_2dp">2dp</dimen>

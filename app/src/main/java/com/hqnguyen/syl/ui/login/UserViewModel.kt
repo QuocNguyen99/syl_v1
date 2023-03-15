@@ -1,9 +1,11 @@
 package com.hqnguyen.syl.ui.login
 
 import android.net.Uri
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hqnguyen.syl.data.local.DataStoreRepositoryImpl
-import com.hqnguyen.syl.ui.map.MapViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.regex.Pattern
@@ -43,7 +45,8 @@ class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel(
             return
         }
 
-        val p: Pattern = Pattern.compile("[^a-z0-9 [!@#\$%&*()_+=|<>?{}\\\\[\\\\]~-]]", Pattern.CASE_INSENSITIVE)
+        val p: Pattern =
+            Pattern.compile("[^a-z0-9 [!@#\$%&*()_+=|<>?{}\\\\[\\\\]~-]]", Pattern.CASE_INSENSITIVE)
 
         if (p.matcher(username).find() || p.matcher(password).find()) {
             _errorLogin.value = "Username or password have special character"
@@ -55,24 +58,30 @@ class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel(
             return
         }
 
-
         if (username == LoginFragment.username || password == LoginFragment.password) {
             _user.value = true
-            viewModelScope.launch {
-                saveTokenLogin("login", "faketoken")
-            }
+            saveString("login", "faketoken")
             return
         }
     }
 
-    private suspend fun saveTokenLogin(key: String, data: String) {
-        dataStore.putString(key, data)
+    fun logout() {
+        viewModelScope.launch {
+            saveString("login", "")
+        }
+        _wasLogin.value = false
     }
 
-    private fun getTokenAndCheckWasLogin(){
+    private fun saveString(key: String, data: String) {
+        viewModelScope.launch {
+            dataStore.putString(key, data)
+        }
+    }
+
+    fun getTokenAndCheckWasLogin() {
         viewModelScope.launch {
             val data = dataStore.getString("login")?.isNotEmpty()
-            Timber.d("onObserverLiveData  data: $data")
+            Timber.d("getTokenAndCheckWasLogin: $data")
             data?.let {
                 _wasLogin.postValue(it)
             }
