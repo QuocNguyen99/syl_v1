@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.regex.Pattern
 
+
 class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel() {
 
     init {
@@ -22,8 +23,8 @@ class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel(
     private val _wasLogin = MutableLiveData(false)
     val wasLogin: LiveData<Boolean> = _wasLogin
 
-    private val _errorLogin = MutableLiveData<String>(null)
-    val errorLogin: LiveData<String> = _errorLogin
+    private val _errorLogin = MutableLiveData<String?>(null)
+    val errorLogin: LiveData<String?> = _errorLogin
 
     private val _uriAvatarUser = MutableLiveData<Uri?>(null)
     val uriAvatarUser: LiveData<Uri?> = _uriAvatarUser
@@ -34,9 +35,21 @@ class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel(
         }
     }
 
+    fun clearDataError() {
+        _errorLogin.value = null
+    }
+
     fun login(username: String, password: String) {
+        val p: Pattern =
+            Pattern.compile("[^a-z0-9 [!@#\$%&*()_+=|<>?{}\\\\[\\\\]~-]]", Pattern.CASE_INSENSITIVE)
+
         if (username.isEmpty()) {
-            _errorLogin.value = "Need fill username"
+            _errorLogin.value = "Need enter all field"
+            return
+        }
+
+        if (password.isEmpty()) {
+            _errorLogin.value =  "Need enter all field"
             return
         }
 
@@ -45,11 +58,13 @@ class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel(
             return
         }
 
-        val p: Pattern =
-            Pattern.compile("[^a-z0-9 [!@#\$%&*()_+=|<>?{}\\\\[\\\\]~-]]", Pattern.CASE_INSENSITIVE)
+        if (p.matcher(username).find()) {
+            _errorLogin.value = "Username have special character"
+            return
+        }
 
-        if (p.matcher(username).find() || p.matcher(password).find()) {
-            _errorLogin.value = "Username or password have special character"
+        if (p.matcher(password).find()) {
+            _errorLogin.value = "Password have special character"
             return
         }
 

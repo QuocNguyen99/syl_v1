@@ -15,6 +15,7 @@ import com.hqnguyen.syl.ui.map.MapViewModel
 import com.hqnguyen.syl.ui.map.MapViewModelFactory
 import com.hqnguyen.syl.utils.DataHelper
 import com.hqnguyen.syl.utils.convertToAvatar
+import com.hqnguyen.syl.utils.saveImage
 import kotlinx.coroutines.launch
 
 class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::inflate) {
@@ -63,6 +64,7 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
         userVM.uriAvatarUser.observe(viewLifecycleOwner) {
             it?.let { uri ->
                 val bitmap = uri.convertToAvatar(requireContext())
+                bitmap?.saveImage(requireContext())
                 binding.imgAvatar.setImageBitmap(bitmap)
             }
         }

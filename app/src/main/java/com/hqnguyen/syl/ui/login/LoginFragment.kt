@@ -3,6 +3,7 @@ package com.hqnguyen.syl.ui.login
 import android.text.InputType
 import android.text.method.PasswordTransformationMethod
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -27,7 +28,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
     override fun onViewCreated() {
         val dataStore = DataStoreRepositoryImpl(requireContext())
-        userVM = ViewModelProvider(requireActivity(), UserViewModelFactory(dataStore))[UserViewModel::class.java]
+        userVM = ViewModelProvider(
+            requireActivity(),
+            UserViewModelFactory(dataStore)
+        )[UserViewModel::class.java]
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
@@ -40,10 +44,17 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         }
 
         binding.btnFacebook.setOnClickListener {
-            showDialog(InfoDialog("Facebook login", "Feature will coming soon", R.drawable.ic_facebook))
+            showDialog(
+                InfoDialog(
+                    "Facebook login",
+                    "Feature will coming soon",
+                    R.drawable.ic_facebook
+                )
+            )
         }
 
         binding.btnLogin.setOnClickListener {
+            binding.tvError.isVisible = false
             val username = binding.edtUsername.text.toString()
             val password = binding.edtPassword.text.toString()
             userVM.login(username = username, password = password)
@@ -100,6 +111,15 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             if (it) {
                 navController.navigate(R.id.action_loginFragment_to_homeFragment)
             }
+        }
+
+        userVM.errorLogin.observe(viewLifecycleOwner) {
+            if (it.isNullOrEmpty()) return@observe
+            binding.tvError.apply {
+                isVisible = true
+                text = it
+            }
+            userVM.clearDataError()
         }
     }
 }
