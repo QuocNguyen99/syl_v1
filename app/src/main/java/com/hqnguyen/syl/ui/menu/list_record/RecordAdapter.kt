@@ -13,7 +13,10 @@ import com.hqnguyen.syl.utils.getDate
 import java.util.*
 
 class RecordAdapter : ListAdapter<ListLocation, RecordAdapter.ViewHolder>(DiffCallback()) {
-    class ViewHolder(private val binding: ItemRecordBinding) :
+
+    var onItemClick: (() -> Unit)? = null
+
+    inner class ViewHolder(private val binding: ItemRecordBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bindData(record: ListLocation) {
@@ -23,6 +26,10 @@ class RecordAdapter : ListAdapter<ListLocation, RecordAdapter.ViewHolder>(DiffCa
                 binding.imgAvatar.setImageResource(R.mipmap.fake_polyline_1)
             } else {
                 binding.imgAvatar.setImageResource(R.mipmap.fake_polyline_2)
+            }
+
+            binding.root.setOnClickListener {
+                onItemClick?.invoke()
             }
         }
     }

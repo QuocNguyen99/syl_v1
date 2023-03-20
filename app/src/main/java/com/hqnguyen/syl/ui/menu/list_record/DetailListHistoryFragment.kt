@@ -1,19 +1,16 @@
 package com.hqnguyen.syl.ui.menu.list_record
 
 import android.annotation.SuppressLint
-import android.location.Location
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
-import com.hqnguyen.syl.data.ListLocation
-import com.hqnguyen.syl.data.local.entity.LocationEntity
 import com.hqnguyen.syl.databinding.FragmentDetailListHistoryBinding
 import com.hqnguyen.syl.ui.map.MapViewModel
 import com.hqnguyen.syl.ui.map.MapViewModelFactory
 import com.hqnguyen.syl.utils.DataHelper
-import com.mapbox.geojson.Point
 import kotlinx.coroutines.launch
 
 
@@ -51,6 +48,9 @@ class DetailListHistoryFragment :
         val dividerItemDecoration = DividerItemDecoration(binding.rv.context, LinearLayoutManager(requireContext()).orientation)
         binding.rv.addItemDecoration(dividerItemDecoration)
         binding.processTarget.max = 50
+        recordAdapter.onItemClick = {
+            navigation(R.id.detailRecordFragment)
+        }
     }
 
     @SuppressLint("SetTextI18n")

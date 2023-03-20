@@ -3,18 +3,12 @@
 package com.hqnguyen.syl.utils
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.*
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.ContextCompat
 import com.hqnguyen.syl.R
-import timber.log.Timber
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -71,38 +65,6 @@ fun Bitmap.getCroppedBitmap(): Bitmap? {
     paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
     canvas.drawBitmap(bitmap, rect, rect, paint)
     return output
-}
-
-fun Bitmap.saveImage(context: Context) {
-    var savedImagePath: String? = ""
-    val imageFileName = "JPEG_" + Calendar.getInstance().timeInMillis.toString() + ".jpg"
-    val storageDir = File(
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            .toString() + "/avatar"
-    )
-    Timber.d("storageDir: $storageDir")
-    var success = true
-    if (!storageDir.exists()) {
-        success = storageDir.mkdirs()
-    }
-    if (success) {
-        val imageFile = File(storageDir, imageFileName)
-        savedImagePath = imageFile.absolutePath
-        try {
-            val fOut: OutputStream = FileOutputStream(imageFile)
-            this.compress(Bitmap.CompressFormat.JPEG, 100, fOut)
-            fOut.close()
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-        }
-    }
-    savedImagePath?.let {
-        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-        val f = File(it)
-        val contentUri = Uri.fromFile(f)
-        mediaScanIntent.data = contentUri
-        context.sendBroadcast(mediaScanIntent)
-    }
 }
 
 fun Uri.convertToBitmap(context: Context): Bitmap? {

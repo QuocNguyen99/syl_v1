@@ -48,5 +48,10 @@
         android:name="com.hqnguyen.syl.ui.menu.list_record.DetailListHistoryFragment"
         android:label="fragment_detail_list_history"
         tools:layout="@layout/fragment_detail_list_history" />
+    <fragment
+        android:id="@+id/detailRecordFragment"
+        android:name="com.hqnguyen.syl.ui.menu.detailrecord.DetailRecordFragment"
+        android:label="fragment_detail_record"
+        tools:layout="@layout/fragment_detail_record" />
 
 </navigation>
