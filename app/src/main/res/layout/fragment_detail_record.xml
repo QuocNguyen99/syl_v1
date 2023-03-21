@@ -40,9 +40,6 @@
         mapbox:layout_constraintStart_toStartOf="parent"
         mapbox:layout_constraintTop_toBottomOf="@id/guidelineOne">
 
-
-        <Recy
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

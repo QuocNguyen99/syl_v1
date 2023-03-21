@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.hqnguyen.syl.R
 import com.hqnguyen.syl.data.ListLocation
 import com.hqnguyen.syl.databinding.ItemRecordBinding
 import com.hqnguyen.syl.utils.getDate
@@ -22,11 +21,12 @@ class RecordAdapter : ListAdapter<ListLocation, RecordAdapter.ViewHolder>(DiffCa
         fun bindData(record: ListLocation) {
             binding.tvDate.text = record.startTime.getDate()
             binding.tvTotalKM.text = String.format("%.2f", (record.distance * 0.001)) + "Km"
-            if (adapterPosition % 2 == 0) {
-                binding.imgAvatar.setImageResource(R.mipmap.fake_polyline_1)
-            } else {
-                binding.imgAvatar.setImageResource(R.mipmap.fake_polyline_2)
-            }
+            binding.imgAvatar.setData(record.list)
+//            if (adapterPosition % 2 == 0) {
+//                binding.imgAvatar.setImageResource(R.mipmap.fake_polyline_1)
+//            } else {
+//                binding.imgAvatar.setImageResource(R.mipmap.fake_polyline_2)
+//            }
 
             binding.root.setOnClickListener {
                 onItemClick?.invoke()
