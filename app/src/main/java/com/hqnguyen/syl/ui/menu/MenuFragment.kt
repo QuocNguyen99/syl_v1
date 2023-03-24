@@ -74,13 +74,11 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
             }
         }
 
-        lifecycleScope.launch {
             mapVM.getListLocationFormLocal().observe(viewLifecycleOwner) {
                 it?.let {
                     val data = DataHelper.getInstance().convertData(it)
 //                    binding.tvTotal.text = "Total: " + data.size.toString()
                 }
-            }
         }
     }
 

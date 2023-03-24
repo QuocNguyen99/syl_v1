@@ -10,6 +10,7 @@
 
         <com.hqnguyen.syl.ui.custom_view.LineView
             android:layout_margin="20dp"
+            android:scaleX="-1"
             android:id="@+id/imgAvatar"
             android:layout_width="@dimen/_70dp"
             android:layout_height="@dimen/_70dp"

@@ -10,10 +10,7 @@ import android.view.View
 import com.hqnguyen.syl.R
 import com.mapbox.geojson.Point
 import timber.log.Timber
-import kotlin.math.cos
-import kotlin.math.ln
-import kotlin.math.roundToInt
-import kotlin.math.sin
+import kotlin.math.*
 
 
 class LineView @JvmOverloads constructor(context: Context, attr: AttributeSet) : View(context, attr) {
@@ -29,7 +26,6 @@ class LineView @JvmOverloads constructor(context: Context, attr: AttributeSet) :
         super.onDraw(canvas)
         mWidth = width
         mHeight = height
-        Timber.d("LineView $width $mHeight")
         val p = Paint()
         p.color = resources.getColor(R.color.blue, null)
         p.strokeWidth = 5f
@@ -39,47 +35,16 @@ class LineView @JvmOverloads constructor(context: Context, attr: AttributeSet) :
 
         val listUTM = list.map { Deg2UTM(it.latitude(), it.longitude()) }
 
-        var maxX = listUTM[0].Easting
-        var maxY = listUTM[0].Northing
-
-        var minX = listUTM[0].Easting
-        var minY = listUTM[0].Northing
-
-        listUTM.forEach {
-            if (maxX <= it.Easting) {
-                maxX = it.Easting
-            }
-            if (maxY <= it.Northing) {
-                maxY = it.Northing
-            }
-
-            if (minX >= it.Easting) {
-                minX = it.Easting
-            }
-            if (minY >= it.Northing) {
-                minY = it.Northing
-            }
-        }
-
-        listUTM.forEachIndexed { index, point ->
-
-            if (index == (listUTM.size - 1)) return
-            Timber.d(
-                "rotation: ${(maxX - minX)}    " +
-                        " X: ${((maxX - minX) / list.size)}   " +
-                        "Y: ${((maxY - minY) / list.size)}"
-            )
-            if (index == 0) {
-                renderPath.moveTo(
-                    ((mWidth / ((maxX - minX) / list.size)) + (maxX - point.Easting)).toFloat(),
-                    ((mHeight / ((maxY - minY) / list.size)) + (maxY - point.Northing)).toFloat()
-                )
-            } else {
-                renderPath.lineTo(
-                    ((mWidth / ((maxX - minX) / list.size)) + (maxX - point.Easting)).toFloat(),
-                    ((mHeight / ((maxY - minY) / list.size)) + (maxY - point.Northing)).toFloat()
-                )
-            }
+        val listScale = listScaleUTMToWidthHeight(listUTM, width, height).distinct()
+        Timber.d("NewData")
+        listScale.forEachIndexed { index, item ->
+            if (listScale.size-1 == index) return
+//            if (index == 0) {
+//                renderPath.moveTo(item.first.toFloat(), item.second.toFloat())
+//            } else {
+//                renderPath.lineTo(item.first.toFloat(), item.second.toFloat())
+            canvas?.drawLine(item.first.toFloat(), item.second.toFloat(),listScale[index+1].first.toFloat(),listScale[index+1].second.toFloat(),p)
+//            }
         }
 
         canvas?.drawPath(renderPath, p)
@@ -90,6 +55,44 @@ class LineView @JvmOverloads constructor(context: Context, attr: AttributeSet) :
         list = points
         invalidate()
     }
+
+    private fun listScaleUTMToWidthHeight(listUTM: List<Deg2UTM>, viewWidth: Int, viewHeight: Int): List<Pair<Double, Double>> {
+        var minEast = listUTM[0].Easting
+        var maxEast = listUTM[1].Easting
+
+        var minNorth = listUTM[0].Northing
+        var maxNorth = listUTM[1].Northing
+
+        listUTM.forEach {
+            if (minEast >= it.Easting) {
+                minEast = it.Easting
+            }
+            if (maxEast <= it.Easting) {
+                maxEast = it.Easting
+            }
+
+            if (minNorth >= it.Northing) {
+                minNorth = it.Northing
+            }
+
+            if (maxNorth <= it.Northing) {
+                maxNorth = it.Northing
+            }
+        }
+
+        return listUTM.map {
+            val rangeEastUTM = maxEast - minEast
+            val rangeWidth = viewWidth - 0
+            val ratioScaleWidth = rangeWidth / rangeEastUTM
+            val x = ratioScaleWidth * (it.Easting - minEast)
+
+            val rangeNorthUTM = maxNorth - minNorth
+            val rangeHeight = viewHeight - 0
+            val ratioScaleHeight = rangeHeight / rangeNorthUTM
+            val y = ratioScaleHeight * (it.Northing - minNorth)
+            Pair(x, y)
+        }
+    }
 }
 
 class Deg2UTM constructor(Lat: Double, Lon: Double) {
@@ -99,7 +102,7 @@ class Deg2UTM constructor(Lat: Double, Lon: Double) {
     var Letter = 0.toChar()
 
     init {
-        Zone = Math.floor(Lon / 6 + 31).toInt()
+        Zone = floor(Lon / 6 + 31).toInt()
         Letter =
             if (Lat < -72) 'C'
             else if (Lat < -64) 'D'
@@ -110,47 +113,31 @@ class Deg2UTM constructor(Lat: Double, Lon: Double) {
             else if (Lat < 8) 'N' else if (Lat < 16) 'P' else if (Lat < 24) 'Q' else if (Lat < 32) 'R'
             else if (Lat < 40) 'S' else if (Lat < 48) 'T' else if (Lat < 56) 'U' else if (Lat < 64) 'V'
             else if (Lat < 72) 'W' else 'X'
+
         Easting = 0.5 * ln(
-            (1 + cos(Lat * Math.PI / 180) * sin(Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180)) / (1 - Math.cos(Lat * Math.PI / 180) * Math.sin(
+            (1 + cos(Lat * Math.PI / 180) * sin(Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180)) / (1 - cos(Lat * Math.PI / 180) * sin(
                 Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180
             ))
-        ) * 0.9996 * 6399593.62 / Math.pow(
-            1 + Math.pow(0.0820944379, 2.0) * Math.pow(Math.cos(Lat * Math.PI / 180), 2.0), 0.5
-        ) * (1 + Math.pow(0.0820944379, 2.0) / 2 * Math.pow(
-            0.5 * Math.log(
-                (1 + Math.cos(Lat * Math.PI / 180) * sin(Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180)) / (1 - Math.cos(Lat * Math.PI / 180) * Math.sin(
-                    Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180
-                ))
-            ),
-            2.0
-        ) * Math.pow(
-            Math.cos(Lat * Math.PI / 180), 2.0
-        ) / 3) + 500000
-        Easting = Math.round(Easting * 100) * 0.01
+        ) * 0.9996 * 6399593.62 / (1 + 0.0820944379.pow(2.0) * cos(Lat * Math.PI / 180).pow(2.0)).pow(0.5) * (1 + 0.0820944379.pow(2.0) / 2 * (0.5 * ln(
+            (1 + cos(Lat * Math.PI / 180) * sin(Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180)) / (1 - cos(Lat * Math.PI / 180) * sin(
+                Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180
+            ))
+        )).pow(2.0) * cos(Lat * Math.PI / 180).pow(2.0) / 3) + 500000
+        Easting = (Easting * 100).roundToInt() * 0.01
         Northing =
-            (Math.atan(Math.tan(Lat * Math.PI / 180) / Math.cos(Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180)) - Lat * Math.PI / 180) * 0.9996 * 6399593.625 / Math.sqrt(
-                1 + 0.006739496742 * Math.pow(Math.cos(Lat * Math.PI / 180), 2.0)
-            ) * (1 + 0.006739496742 / 2 * Math.pow(
-                0.5 * Math.log(
-                    (1 + Math.cos(Lat * Math.PI / 180) * Math.sin(
-                        Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180
-                    )) / (1 - Math.cos(Lat * Math.PI / 180) * Math.sin(Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180))
-                ), 2.0
-            ) * Math.pow(
-                Math.cos(Lat * Math.PI / 180),
-                2.0
-            )) + 0.9996 * 6399593.625 * (Lat * Math.PI / 180 - 0.005054622556 * (Lat * Math.PI / 180 + Math.sin(2 * Lat * Math.PI / 180) / 2) + 4.258201531e-05 * (3 * (Lat * Math.PI / 180 + Math.sin(
+            (atan(tan(Lat * Math.PI / 180) / cos(Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180)) - Lat * Math.PI / 180) * 0.9996 * 6399593.625 / sqrt(
+                1 + 0.006739496742 * cos(Lat * Math.PI / 180).pow(2.0)
+            ) * (1 + 0.006739496742 / 2 * (0.5 * ln(
+                (1 + cos(Lat * Math.PI / 180) * sin(
+                    Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180
+                )) / (1 - cos(Lat * Math.PI / 180) * sin(Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180))
+            )).pow(2.0) * cos(Lat * Math.PI / 180).pow(2.0)) + 0.9996 * 6399593.625 * (Lat * Math.PI / 180 - 0.005054622556 * (Lat * Math.PI / 180 + sin(2 * Lat * Math.PI / 180) / 2) + 4.258201531e-05 * (3 * (Lat * Math.PI / 180 + sin(
                 2 * Lat * Math.PI / 180
-            ) / 2) + Math.sin(2 * Lat * Math.PI / 180) * Math.pow(
-                Math.cos(Lat * Math.PI / 180), 2.0
-            )) / 4 - 1.674057895e-07 * (5 * (3 * (Lat * Math.PI / 180 + Math.sin(2 * Lat * Math.PI / 180) / 2) + Math.sin(2 * Lat * Math.PI / 180) * Math.pow(
-                Math.cos(Lat * Math.PI / 180),
+            ) / 2) + sin(2 * Lat * Math.PI / 180) * cos(Lat * Math.PI / 180).pow(2.0)) / 4 - 1.674057895e-07 * (5 * (3 * (Lat * Math.PI / 180 + sin(2 * Lat * Math.PI / 180) / 2) + sin(2 * Lat * Math.PI / 180) * cos(Lat * Math.PI / 180).pow(2.0)) / 4 + sin(2 * Lat * Math.PI / 180) * cos(Lat * Math.PI / 180).pow(
                 2.0
-            )) / 4 + Math.sin(2 * Lat * Math.PI / 180) * Math.pow(Math.cos(Lat * Math.PI / 180), 2.0) * Math.pow(
-                Math.cos(Lat * Math.PI / 180), 2.0
-            )) / 3)
+            ) * cos(Lat * Math.PI / 180).pow(2.0)) / 3)
         if (Letter < 'M') Northing += 10_000_000
-        Timber.d("Easting: $Easting  Northing:$Northing")
+        Timber.d("Easting: $Easting            Northing:$Northing")
         Northing = (Northing * 100).roundToInt() * 0.01
 
     }
