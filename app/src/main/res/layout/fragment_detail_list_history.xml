@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.menu.list_record.DetailListHistoryFragment">
+    tools:context=".ui.record.list_record.ListRecordFragment">
 
     <include
         android:id="@+id/header"
@@ -83,7 +83,6 @@
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/_20dp"
         android:background="@color/C0C0C0"
-        app:cardCornerRadius="@dimen/_20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

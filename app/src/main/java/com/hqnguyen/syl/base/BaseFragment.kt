@@ -14,7 +14,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
-import com.hqnguyen.syl.R
 import com.hqnguyen.syl.data.InfoDialog
 import com.hqnguyen.syl.ui.dialog.DialogViewModel
 import com.hqnguyen.syl.ui.dialog.NotifyDialog
@@ -44,7 +43,7 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
         onViewCreated()
-        onObserverLiveData()
+        onObserver()
     }
 
     override fun onDestroyView() {
@@ -64,5 +63,5 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
 
     open fun onViewCreated() {}
 
-    open fun onObserverLiveData() {}
+    open fun onObserver() {}
 }

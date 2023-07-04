@@ -11,22 +11,29 @@ import com.hqnguyen.syl.ui.login.UserViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::inflate) {
     private lateinit var userVM: UserViewModel
 
     override fun onViewCreated() {
         val dataStore = DataStoreRepositoryImpl(requireContext())
-        userVM = ViewModelProvider(requireActivity(), UserViewModelFactory(dataStore))[UserViewModel::class.java]
+        userVM = ViewModelProvider(
+            requireActivity(),
+            UserViewModelFactory(dataStore)
+        )[UserViewModel::class.java]
+        userVM.getTokenAndCheckWasLogin()
     }
 
-    override fun onObserverLiveData() {
+
+    override fun onObserver() {
         lifecycleScope.launch(Dispatchers.Main) {
             delay(1000)
-            userVM.wasLogin.observe(viewLifecycleOwner) { user ->
+            userVM.wasLogin.observe(viewLifecycleOwner) { isLogin ->
+                Timber.d("onObserverLiveData: $isLogin")
                 lifecycleScope.launch {
                     delay(500)
-                    if (!user) {
+                    if (!isLogin) {
                         navigation(R.id.action_mainFragment_to_loginFragment)
                     } else {
                         navigation(R.id.action_mainFragment_to_homeFragment)
@@ -34,6 +41,5 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
                 }
             }
         }
-
     }
 }

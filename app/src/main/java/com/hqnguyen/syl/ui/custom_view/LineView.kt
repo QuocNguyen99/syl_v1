@@ -12,6 +12,7 @@ import com.mapbox.geojson.Point
 import timber.log.Timber
 import kotlin.math.cos
 import kotlin.math.ln
+import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
@@ -136,10 +137,7 @@ class Deg2UTM constructor(Lat: Double, Lon: Double) {
                         Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180
                     )) / (1 - Math.cos(Lat * Math.PI / 180) * Math.sin(Lon * Math.PI / 180 - (6 * Zone - 183) * Math.PI / 180))
                 ), 2.0
-            ) * Math.pow(
-                Math.cos(Lat * Math.PI / 180),
-                2.0
-            )) + 0.9996 * 6399593.625 * (Lat * Math.PI / 180 - 0.005054622556 * (Lat * Math.PI / 180 + Math.sin(2 * Lat * Math.PI / 180) / 2) + 4.258201531e-05 * (3 * (Lat * Math.PI / 180 + Math.sin(
+            ) * Math.cos(Lat * Math.PI / 180).pow(2.0)) + 0.9996 * 6399593.625 * (Lat * Math.PI / 180 - 0.005054622556 * (Lat * Math.PI / 180 + Math.sin(2 * Lat * Math.PI / 180) / 2) + 4.258201531e-05 * (3 * (Lat * Math.PI / 180 + Math.sin(
                 2 * Lat * Math.PI / 180
             ) / 2) + Math.sin(2 * Lat * Math.PI / 180) * Math.pow(
                 Math.cos(Lat * Math.PI / 180), 2.0

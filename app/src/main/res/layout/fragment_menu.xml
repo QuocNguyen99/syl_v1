@@ -130,26 +130,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/cardAuth" />
-
-                    <com.google.android.material.divider.MaterialDivider
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/_1dp"
-                        app:dividerColor="@color/C0C0C0"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/cardTheme" />
-
-                    <com.hqnguyen.syl.ui.custom_view.CardItem
-                        android:id="@+id/cardLogout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:carTitle="Log out"
-                        app:cardDescription="Log out your account"
-                        app:cardLogo="@mipmap/ic_logout"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/cardTheme" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
@@ -161,7 +141,7 @@
                 android:layout_marginTop="@dimen/_32dp"
                 android:layout_marginBottom="@dimen/_12dp"
                 app:cardCornerRadius="@dimen/_12dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/cardLogout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layoutSetting">
@@ -202,6 +182,21 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/cardLogout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12dp"
+                android:padding="@dimen/_12dp"
+                android:text="Log out"
+                android:textAlignment="center"
+                android:textColor="@color/blue"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutAboutMe" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

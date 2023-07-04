@@ -1,11 +1,9 @@
 package com.hqnguyen.syl.ui.menu
 
-import android.annotation.SuppressLint
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
 import com.hqnguyen.syl.R
 import com.hqnguyen.syl.base.BaseFragment
 import com.hqnguyen.syl.databinding.FragmentMenuBinding
@@ -46,6 +44,7 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
         }
         binding.cardLogout.setOnClickListener {
             userVM.logout()
+            navController.navigate(R.id.action_homeFragment_to_loginFragment)
         }
         binding.cardAuth.setOnClickListener { }
         binding.cardSupport.setOnClickListener { }
@@ -58,19 +57,11 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
 
     }
 
-    @SuppressLint("SetTextI18n")
-    override fun onObserverLiveData() {
+    override fun onObserver() {
         userVM.uriAvatarUser.observe(viewLifecycleOwner) {
             it?.let { uri ->
                 val bitmap = uri.convertToAvatar(requireContext())
                 binding.imgAvatar.setImageBitmap(bitmap)
-            }
-        }
-
-        userVM.wasLogin.observe(viewLifecycleOwner) {
-            if (!it) {
-                navController.navigate(R.id.loginFragment)
-                clearBackStack()
             }
         }
 
@@ -82,10 +73,5 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(FragmentMenuBinding::infl
                 }
             }
         }
-    }
-
-    private fun clearBackStack() {
-        NavOptions.Builder().setLaunchSingleTop(true)
-        NavOptions.Builder().setPopUpTo(R.id.nav_main, true)
     }
 }

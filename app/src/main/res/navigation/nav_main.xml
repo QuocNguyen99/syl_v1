@@ -38,19 +38,26 @@
         android:id="@+id/homeFragment"
         android:name="com.hqnguyen.syl.ui.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_detailListHistoryFragment"
             app:destination="@id/detailListHistoryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@+id/homeFragment"
+            app:popUpToInclusive="true" />
     </fragment>
+
     <fragment
         android:id="@+id/detailListHistoryFragment"
-        android:name="com.hqnguyen.syl.ui.menu.list_record.DetailListHistoryFragment"
+        android:name="com.hqnguyen.syl.ui.record.list_record.ListRecordFragment"
         android:label="fragment_detail_list_history"
         tools:layout="@layout/fragment_detail_list_history" />
+
     <fragment
         android:id="@+id/detailRecordFragment"
-        android:name="com.hqnguyen.syl.ui.menu.detailrecord.DetailRecordFragment"
+        android:name="com.hqnguyen.syl.ui.record.detailrecord.DetailRecordFragment"
         android:label="fragment_detail_record"
         tools:layout="@layout/fragment_detail_record" />
 

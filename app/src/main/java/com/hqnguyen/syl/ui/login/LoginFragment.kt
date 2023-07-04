@@ -1,7 +1,11 @@
 package com.hqnguyen.syl.ui.login
 
+import android.os.Bundle
 import android.text.InputType
 import android.text.method.PasswordTransformationMethod
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -13,13 +17,17 @@ import com.hqnguyen.syl.base.BaseFragment
 import com.hqnguyen.syl.data.InfoDialog
 import com.hqnguyen.syl.data.local.DataStoreRepositoryImpl
 import com.hqnguyen.syl.databinding.FragmentLoginBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::inflate) {
 
     private lateinit var userVM: UserViewModel
     private var isShowPassword = false
-    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private var mGoogleSignInClient: GoogleSignInClient? = null
 
     companion object {
         const val username = "samsung"
@@ -35,7 +43,18 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+        Timber.d(" navController LoginFragment: onViewCreated")
         initEvent()
+        Timber.d("TESTTTTTTT ")
+        GlobalScope.launch {
+            delay(500)
+            Timber.d("TESTTTTTTT  Scope")
+        }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     private fun initEvent() {
@@ -106,7 +125,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         }
     }
 
-    override fun onObserverLiveData() {
+    override fun onObserver() {
         userVM.user.observe(viewLifecycleOwner) {
             if (it) {
                 navController.navigate(R.id.action_loginFragment_to_homeFragment)

@@ -6,16 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hqnguyen.syl.data.local.DataStoreRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.regex.Pattern
 
 
 class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel() {
-
-    init {
-        getTokenAndCheckWasLogin()
-    }
 
     private val _user = MutableLiveData(false)
     val user: LiveData<Boolean> = _user
@@ -30,13 +28,17 @@ class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel(
     val uriAvatarUser: LiveData<Uri?> = _uriAvatarUser
 
     fun updateAvatarUser(uri: Uri?) {
-        uri?.let { it ->
+        uri?.let {
             _uriAvatarUser.value = it
         }
     }
 
     fun clearDataError() {
         _errorLogin.value = null
+    }
+
+    fun clearDataUser() {
+        _user.value = false
     }
 
     fun login(username: String, password: String) {
@@ -49,7 +51,7 @@ class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel(
         }
 
         if (password.isEmpty()) {
-            _errorLogin.value =  "Need enter all field"
+            _errorLogin.value = "Need enter all field"
             return
         }
 
@@ -82,9 +84,11 @@ class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel(
 
     fun logout() {
         viewModelScope.launch {
+            Timber.d("navController logout")
             saveString("login", "")
+            _wasLogin.value = false
+            _user.value = false
         }
-        _wasLogin.value = false
     }
 
     private fun saveString(key: String, data: String) {
@@ -98,7 +102,10 @@ class UserViewModel(private val dataStore: DataStoreRepositoryImpl) : ViewModel(
             val data = dataStore.getString("login")?.isNotEmpty()
             Timber.d("getTokenAndCheckWasLogin: $data")
             data?.let {
-                _wasLogin.postValue(it)
+                withContext(Dispatchers.Main.immediate) {
+                    Timber.d("navController getTokenAndCheckWasLogin")
+                    _wasLogin.value = it
+                }
             }
         }
     }

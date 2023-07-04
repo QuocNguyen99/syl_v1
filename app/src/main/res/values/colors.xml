@@ -10,6 +10,7 @@
     <color name="blue">#3498DB</color>
     <color name="blue_alpha">#D33498DB</color>
     <color name="C0C0C0">#C0C0C0</color>
+    <color name="FFEAEAEA">#EAEAEA</color>
     <color name="red">#FF0000</color>
     <color name="colorDialogBackground">@android:color/transparent</color>
 </resources>

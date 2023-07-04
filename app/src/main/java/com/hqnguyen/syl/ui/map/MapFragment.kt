@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -110,7 +111,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
         }
     }
 
-    override fun onObserverLiveData() {
+    override fun onObserver() {
         userVM.uriAvatarUser.observe(viewLifecycleOwner) {
             it?.let { uri ->
                 avatarMarker = uri.convertToAvatar(requireContext())
@@ -130,6 +131,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
                             "POINT_LIST",
                             ArrayList::class.java
                         ) as ArrayList<Point>
+
                         else -> it.getSerializable("POINT_LIST") as ArrayList<Point>
                     }
                     pointList = data
@@ -139,14 +141,16 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     }
 
     private fun intEvent() {
-        binding.fabRecordLocation.setOnClickListener {
+        binding.btnRecordLocation.setOnClickListener {
             if (PermissionHelper.isGranted(requireActivity(), *PermissionHelper.locationPermission)
             ) {
-                if (isRecording) {
-                    binding.fabRecordLocation.setImageResource(R.drawable.ic_play)
+                if (binding.layoutInfo.isVisible) {
+                    binding.layoutInfo.isVisible = false
+                    binding.btnRecordLocation.text = "Start"
                     stopService()
                 } else {
-                    binding.fabRecordLocation.setImageResource(R.drawable.ic_resume)
+                    binding.layoutInfo.isVisible = true
+                    binding.btnRecordLocation.text = "Resume"
                     startService()
                 }
                 isRecording = !isRecording
@@ -320,4 +324,10 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
             start()
         }
     }
+
+    override fun onDestroyView() {
+        binding.mapView.onDestroy()
+        super.onDestroyView()
+    }
+
 }

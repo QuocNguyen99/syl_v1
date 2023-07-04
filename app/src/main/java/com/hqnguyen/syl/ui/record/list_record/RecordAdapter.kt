@@ -1,4 +1,4 @@
-package com.hqnguyen.syl.ui.menu.list_record
+package com.hqnguyen.syl.ui.record.list_record
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

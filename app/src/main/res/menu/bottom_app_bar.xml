@@ -2,9 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:icon="@drawable/ic_distance"
+        android:id="@+id/record"
+        android:title="Record"
+        app:showAsAction="always" />
+
+    <item
         android:icon="@drawable/ic_location"
         android:id="@+id/location"
-        android:title="@string/location"
+        android:title="Start"
         app:showAsAction="always" />
 
     <item

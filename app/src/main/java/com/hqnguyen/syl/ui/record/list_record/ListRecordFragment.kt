@@ -1,4 +1,4 @@
-package com.hqnguyen.syl.ui.menu.list_record
+package com.hqnguyen.syl.ui.record.list_record
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModelProvider
@@ -14,7 +14,7 @@ import com.hqnguyen.syl.utils.DataHelper
 import kotlinx.coroutines.launch
 
 
-class DetailListHistoryFragment :
+class ListRecordFragment :
     BaseFragment<FragmentDetailListHistoryBinding>(FragmentDetailListHistoryBinding::inflate) {
 
     private lateinit var mapVM: MapViewModel
@@ -54,7 +54,7 @@ class DetailListHistoryFragment :
     }
 
     @SuppressLint("SetTextI18n")
-    override fun onObserverLiveData() {
+    override fun onObserver() {
         lifecycleScope.launch {
             mapVM.getListLocationFormLocal().observe(viewLifecycleOwner) {
                 it?.let {

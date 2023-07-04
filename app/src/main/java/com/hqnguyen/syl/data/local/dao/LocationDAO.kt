@@ -9,7 +9,7 @@ import com.hqnguyen.syl.data.local.entity.LocationEntity
 @Dao
 interface LocationDAO {
     @Insert
-    suspend fun insertItemLocation(locationLocal: LocationEntity)
+     fun insertItemLocation(locationLocal: LocationEntity)
 
     @Query("SELECT * FROM location")
     fun getListLocation(): LiveData<List<LocationEntity>>

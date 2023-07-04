@@ -27,12 +27,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
             bottomNavigationView.setOnItemSelectedListener {
                 when (it.itemId) {
-                    R.id.location -> {
+                    R.id.record -> {
                         viewpager.setCurrentItem(0, true)
                         return@setOnItemSelectedListener false
                     }
-                    R.id.menu -> {
+                    R.id.location -> {
                         viewpager.setCurrentItem(1, true)
+                        return@setOnItemSelectedListener false
+                    }
+                    R.id.menu -> {
+                        viewpager.setCurrentItem(2, true)
                         return@setOnItemSelectedListener false
                     }
                     else -> {

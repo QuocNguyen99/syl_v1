@@ -18,26 +18,214 @@
         mapbox:layout_constraintTop_toTopOf="parent"
         mapbox:mapbox_cameraZoom="14.0" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabRecordLocation"
-        android:layout_width="wrap_content"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layoutInfo"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_12dp"
+        android:layout_marginHorizontal="@dimen/_24dp"
+        android:layout_marginVertical="@dimen/_8dp"
+        app:cardCornerRadius="@dimen/_24dp"
+        app:layout_constraintBottom_toTopOf="@id/btnRecordLocation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideColumn"
+                android:layout_width="@dimen/_1dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideRow"
+                android:layout_width="@dimen/_1dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="@dimen/_1dp"
+                android:layout_height="0dp"
+                android:background="@color/FFEAEAEA"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_1dp"
+                android:background="@color/FFEAEAEA"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!--item 1-->
+            <ImageView
+                android:id="@+id/imgActivity"
+                android:layout_width="@dimen/_36dp"
+                android:layout_height="@dimen/_36dp"
+                android:layout_marginHorizontal="@dimen/_20dp"
+                android:layout_marginVertical="@dimen/_20dp"
+                android:src="@drawable/ic_running"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/guideRow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvActivity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12dp"
+                android:text="@string/activity_text"
+                app:layout_constraintEnd_toEndOf="@id/guideColumn"
+                app:layout_constraintStart_toEndOf="@id/imgActivity"
+                app:layout_constraintTop_toTopOf="@id/imgActivity" />
+
+            <TextView
+                android:id="@+id/tvContentActivity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Đang chạy"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/imgActivity"
+                app:layout_constraintEnd_toEndOf="@id/guideColumn"
+                app:layout_constraintStart_toStartOf="@id/tvActivity"
+                app:layout_constraintTop_toBottomOf="@id/tvActivity" />
+
+            <!--item 2-->
+            <ImageView
+                android:id="@+id/imgSpeed"
+                android:layout_width="@dimen/_36dp"
+                android:layout_height="@dimen/_36dp"
+                android:layout_marginHorizontal="@dimen/_20dp"
+                android:layout_marginVertical="@dimen/_20dp"
+                android:src="@drawable/ic_speed"
+                app:layout_constraintBottom_toTopOf="@id/guideRow"
+                app:layout_constraintStart_toEndOf="@id/guideColumn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvSpeed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12dp"
+                android:text="Tốc độ"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imgSpeed"
+                app:layout_constraintTop_toTopOf="@id/imgSpeed" />
+
+            <TextView
+                android:id="@+id/tvContentSpeed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="4km/h"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/imgSpeed"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tvSpeed"
+                app:layout_constraintTop_toBottomOf="@id/tvSpeed" />
+
+            <!--item 3-->
+            <ImageView
+                android:id="@+id/imgTime"
+                android:layout_width="@dimen/_36dp"
+                android:layout_height="@dimen/_36dp"
+                android:layout_marginHorizontal="@dimen/_20dp"
+                android:layout_marginVertical="@dimen/_20dp"
+                android:src="@drawable/ic_time"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/guideRow" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12dp"
+                android:text="Thời gian"
+                app:layout_constraintEnd_toEndOf="@id/guideColumn"
+                app:layout_constraintStart_toEndOf="@id/imgTime"
+                app:layout_constraintTop_toTopOf="@id/imgTime" />
+
+            <TextView
+                android:id="@+id/tvContentTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="30:12p"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/imgTime"
+                app:layout_constraintEnd_toEndOf="@id/guideColumn"
+                app:layout_constraintStart_toStartOf="@id/tvTime"
+                app:layout_constraintTop_toBottomOf="@id/tvTime" />
+
+            <!--item 4-->
+            <ImageView
+                android:id="@+id/imgKm"
+                android:layout_width="@dimen/_36dp"
+                android:layout_height="@dimen/_36dp"
+                android:layout_marginHorizontal="@dimen/_20dp"
+                android:layout_marginVertical="@dimen/_20dp"
+                android:src="@drawable/ic_distance"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideColumn"
+                app:layout_constraintTop_toBottomOf="@id/guideRow" />
+
+            <TextView
+                android:id="@+id/tvKm"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12dp"
+                android:text="Quãng đường"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imgKm"
+                app:layout_constraintTop_toTopOf="@id/imgKm" />
+
+            <TextView
+                android:id="@+id/tvContentKm"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="3,2km"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/imgKm"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tvKm"
+                app:layout_constraintTop_toBottomOf="@id/tvKm" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnRecordLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_24dp"
         android:layout_marginBottom="@dimen/_24dp"
-        android:background="@color/blue_alpha"
-        android:contentDescription="FAB"
+        android:padding="@dimen/_12dp"
         android:src="@drawable/ic_play"
-        app:backgroundTint="@color/white"
+        android:text="@string/start"
+        app:backgroundTint="@color/blue"
+        app:cornerRadius="@dimen/_12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="@dimen/_28dp" />
-    
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="@dimen/_100dp"
-        app:layout_constraintBottom_toTopOf="@id/fabRecordLocation"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/test"
-        />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

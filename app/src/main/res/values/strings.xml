@@ -12,5 +12,7 @@
     <string name="location_background">LOCATION_BACKGROUND</string>
     <string name="history_record">History record</string>
     <string name="your_image_display">Your image display</string>
+    <string name="start">Start</string>
+    <string name="activity_text">Họạt động</string>
 
 </resources>
