@@ -20,6 +20,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/layoutInfo"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_24dp"
@@ -76,8 +77,8 @@
             <!--item 1-->
             <ImageView
                 android:id="@+id/imgActivity"
-                android:layout_width="@dimen/_36dp"
-                android:layout_height="@dimen/_36dp"
+                android:layout_width="@dimen/_32dp"
+                android:layout_height="@dimen/_32dp"
                 android:layout_marginHorizontal="@dimen/_20dp"
                 android:layout_marginVertical="@dimen/_20dp"
                 android:src="@drawable/ic_running"
@@ -111,8 +112,8 @@
             <!--item 2-->
             <ImageView
                 android:id="@+id/imgSpeed"
-                android:layout_width="@dimen/_36dp"
-                android:layout_height="@dimen/_36dp"
+                android:layout_width="@dimen/_32dp"
+                android:layout_height="@dimen/_32dp"
                 android:layout_marginHorizontal="@dimen/_20dp"
                 android:layout_marginVertical="@dimen/_20dp"
                 android:src="@drawable/ic_speed"
@@ -145,8 +146,8 @@
             <!--item 3-->
             <ImageView
                 android:id="@+id/imgTime"
-                android:layout_width="@dimen/_36dp"
-                android:layout_height="@dimen/_36dp"
+                android:layout_width="@dimen/_32dp"
+                android:layout_height="@dimen/_32dp"
                 android:layout_marginHorizontal="@dimen/_20dp"
                 android:layout_marginVertical="@dimen/_20dp"
                 android:src="@drawable/ic_time"
@@ -179,8 +180,8 @@
             <!--item 4-->
             <ImageView
                 android:id="@+id/imgKm"
-                android:layout_width="@dimen/_36dp"
-                android:layout_height="@dimen/_36dp"
+                android:layout_width="@dimen/_32dp"
+                android:layout_height="@dimen/_32dp"
                 android:layout_marginHorizontal="@dimen/_20dp"
                 android:layout_marginVertical="@dimen/_20dp"
                 android:src="@drawable/ic_distance"

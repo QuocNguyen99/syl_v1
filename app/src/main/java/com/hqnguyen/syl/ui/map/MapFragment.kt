@@ -10,6 +10,7 @@ import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Looper
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -36,6 +37,7 @@ import com.mapbox.maps.plugin.annotation.generated.*
 import com.mapbox.maps.plugin.locationcomponent.location
 import timber.log.Timber
 import java.util.*
+import kotlin.math.roundToInt
 
 class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate) {
 
@@ -76,6 +78,8 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
     private var pointAnnotation: PointAnnotation? = null
     private var polylineAnnotation: PolylineAnnotation? = null
     private var isCreatedPolylineManager = false
+
+    private var countTimer : CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,10 +152,25 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
                     binding.layoutInfo.isVisible = false
                     binding.btnRecordLocation.text = "Start"
                     stopService()
+                    countTimer?.cancel()
+                    countTimer = null
                 } else {
                     binding.layoutInfo.isVisible = true
                     binding.btnRecordLocation.text = "Resume"
                     startService()
+                    countTimer = object :CountDownTimer(200,1000){
+                        override fun onTick(millisUntilFinished: Long) {
+                            val hours = (millisUntilFinished / (1000 * 60 * 60)).toInt()
+                            val minutes = ((millisUntilFinished % (1000 * 60 * 60)) / (1000 * 60)).toInt()
+                            val seconds = ((millisUntilFinished % (1000 * 60)) / 1000).toInt()
+                            Timber.d("millisUntilFinished: $millisUntilFinished - housr: $hours - minus: $minutes - seconds: $seconds")
+                            binding.tvContentTime.text = "$hours:$minutes:$seconds"
+                        }
+
+                        override fun onFinish() {
+                        }
+                    }
+                    countTimer?.start()
                 }
                 isRecording = !isRecording
                 timeStart = Calendar.getInstance().timeInMillis.toString()
@@ -206,6 +225,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(FragmentMapBinding::inflate
                         Timber.d("onLocationResult longitude: $longitude -- latitude: $latitude ")
                         if (locationResult.lastLocation?.longitude == longitude && locationResult.lastLocation?.latitude == latitude)
                             return
+                        binding.tvContentSpeed.text = "${locationResult.lastLocation?.speed?.times(3.6)?.roundToInt()} km/h"
                         preLongitude = longitude
                         preLatitude = latitude
                         longitude = locationResult.lastLocation?.longitude ?: 0.0
